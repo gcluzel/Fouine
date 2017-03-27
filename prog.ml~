@@ -1,0 +1,10 @@
+(* type programme pour traiter un programme*)
+type expr =
+  | Const of int
+  | Add of expr * expr
+  | Mul of expr * expr
+  | Min of expr * expr
+                    
+type prog =
+  | Var of string 
+  | Expr of expr
