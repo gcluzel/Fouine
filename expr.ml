@@ -5,6 +5,15 @@ type expr =
   | Mul of expr*expr
   | Min of expr*expr
 
+(* un type pour les expressions booléennes ? *)
+		  
+(* Le type pour les programmes fouine *)
+type prog =
+    ExprAr of expr
+  | Function of var*prog
+  | Letin of (* que mettre là ? *)*prog
+  | RecFunction of var*prog
+  | IfThenElse of exprbool*prog*prog
 
 
 (* fonction d'affichage *)
