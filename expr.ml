@@ -17,32 +17,45 @@ type exprbool =
   | Ge of expr*expr
   | Lt of expr*expr
   | Le of expr*expr
-		    
+
+(* un type pour les affections dans les let .. in*)
+type affect =
+    Variable of var
+(* | Value of (* que mettre ici ? -> un programme ?*) *)
+      
 (* Le type pour les programmes fouine *)
 type prog =
-    ExprAr of expr
-  | Function of var*prog
-  | Letin of (* que mettre là ? *)*prog
-  | RecFunction of var*prog
-  | IfThenElse of exprbool*prog*prog
+    ExprAr of expr (* une expression arithmétique *)
+  | Function of var*var*prog (* nom de la fonction, nom de la variable puis la fonction proprement dite *)
+  | Letin of affect*prog (* une affection puis un programme *)
+  | RecFunction of var*var*prog (* nom de la fonction, nom de la variable, puis la fonction proprement dite *)
+  | IfThenElse of exprbool*prog*prog (* la condition, puis le programme du if puis le programme du else *)
 
+(* fonction d'affichage d'un programme fouine *)
+let rec affiche_prog p =
+  match p with
+  | ExprAr e -> affiche_expr e
+  | Function (nom,variable,pp) -> affiche_fun nom variable pp
+  | Letin (a,pp) -> affiche_letin a pp
+  | RecFunction (nom,variable, pp) -> affiche_fun_rec nom variable pp
+  | IfThenElse (cond,pif,pelse) -> affiche_ifthenelse cond pif pelse
 
-(* fonction d'affichage *)
+(* fonction d'affichage d'une expression arithmétique *)
 let rec affiche_expr e =
   let aff_aux s a b = 
       begin
-	print_string s;
+	print_string "(";
 	affiche_expr a;
-	print_string ", ";
+	print_string s;
 	affiche_expr b;
 	print_string ")"
       end
   in
   match e with
   | Const k -> print_int k
-  | Add(e1,e2) -> aff_aux "Add(" e1 e2
-  | Mul(e1,e2) -> aff_aux "Mul(" e1 e2
-  | Min(e1,e2) -> aff_aux "Min(" e1 e2
+  | Add(e1,e2) -> aff_aux "+" e1 e2
+  | Mul(e1,e2) -> aff_aux "*" e1 e2
+  | Min(e1,e2) -> aff_aux "-" e1 e2
 
 (* sémantique opérationnelle à grands pas *)
 let rec eval = function
