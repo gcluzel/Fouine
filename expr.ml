@@ -1,6 +1,5 @@
 (* Un type pour les noms de variable *)
-type var =
-    Nom of string
+type var == string
 
 (* un type pour des expressions arithmétiques simples *)
 type expr =
@@ -35,10 +34,36 @@ type prog =
 let rec affiche_prog p =
   match p with
   | ExprAr e -> affiche_expr e
-  | Function (nom,variable,pp) -> affiche_fun nom variable pp
-  | Letin (a,pp) -> affiche_letin a pp
-  | RecFunction (nom,variable, pp) -> affiche_fun_rec nom variable pp
-  | IfThenElse (cond,pif,pelse) -> affiche_ifthenelse cond pif pelse
+  | Function (nom,variable,pp) -> begin
+				  print_string "let ";
+				  print_stirng nom;
+				  print_strinf " = fun ";
+				  print_string variable;
+				  print_string " ->";
+				  print_newline();
+				  affiche_prog pp;
+				end
+  | Letin (a,pp) -> begin
+		    print_string "let ";
+		  (* affichage du a ??? *)
+		    print_string " in\n";
+		    affiche_prog pp;
+		  end
+  | RecFunction (nom,variable, pp) -> begin
+				      print_string "let rec ";
+				      print_stirng nom;
+				      print_strinf " = fun ";
+				      print_string variable;
+				      print_string " ->";
+				      print_newline();
+				      affiche_prog pp;
+				    end
+  | IfThenElse (cond,pif,pelse) -> begin
+				   print_string "if (";
+				   print_string "then\n";
+				   affiche_prog pif;
+				   print_string "\nelse\n";
+				   affiche_prog pelse;
 
 (* fonction d'affichage d'une expression arithmétique *)
 let rec affiche_expr e =
@@ -52,6 +77,7 @@ let rec affiche_expr e =
       end
   in
   match e with
+    Variable s -> print_string s
   | Const k -> print_int k
   | Add(e1,e2) -> aff_aux "+" e1 e2
   | Mul(e1,e2) -> aff_aux "*" e1 e2
