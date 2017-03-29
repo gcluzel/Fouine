@@ -46,6 +46,14 @@ let rec affiche_expr e =
   | Mul(e1,e2) -> aff_aux "*" e1 e2
   | Min(e1,e2) -> aff_aux "-" e1 e2
 
+(* Fonction d'affichage d'une expression booléenne *)
+let affiche_bool s e1 e2 =
+  begin
+    affiche_expr e1;
+    print_string s;
+    affiche_expr e2;
+  end
+			  
 (* fonction d'affichage d'un programme fouine *)
 let rec affiche_prog_aux p =
   match p with
@@ -76,39 +84,20 @@ let rec affiche_prog_aux p =
 				      print_newline();
 				      affiche_prog_aux pp;
 				    end
- (* | IfThenElse (cond,pif,pelse) -> begin
+  | IfThenElse (cond,pif,pelse) -> begin
 				   print_string "if (";
 				   match cond with
-				     Eq (e1,e2) -> begin
-						  affiche_expr e1;
-						  print_string "=";
-						  affiche_expr e2;
-						end
-				   |  Gt (e1,e2) -> begin
-						    affiche_expr e1;
-						    print_string ">";
-						    affiche_expr e2;
-						  end
-				   | Ge (e1,e2) -> begin
-						   affiche_expr e1;
-						   print_string ">=";
-						   affiche_expr e2;
-						 end
-				   | Lt (e1,e2) -> begin
-						   affiche_expr e1;
-						   print_string "<";
-						   affiche_expr e2;
-						 end
-				   | Eq (e1,e2) -> begin
-						   affiche_expr e1;
-						   print_string "<=";
-						   affiche_expr e2;
-						 end
+				     Eq (e1,e2) -> affiche_bool "=" e1 e2
+				   | Neq (e1,e2) -> affiche_bool "!=" e1 e2
+				   | Gt(e1,e2) -> affiche_bool ">" e1 e2
+				   | Ge(e1,e2) -> affiche_bool ">=" e1 e2
+				   | Lt(e1,e2) -> affiche_bool "<" e1 e2
+				   | Le(e1,e2) -> affiche_bool "<=" e1 e2;
 				   print_string ")\nthen\n";
-				   affiche_prog pif;
+				   affiche_prog_aux pif;
 				   print_string "\nelse\n";
-				   affiche_prog pelse;
-				 end*) (* Not yet implemented *)
+				   affiche_prog_aux pelse;
+				 end (* Not yet implemented *)
 
 let affiche_prog p =
   begin
