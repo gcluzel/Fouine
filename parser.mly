@@ -36,9 +36,8 @@ main:
     | prog EOF                { $1 } 
 ;
 prog:
-  | expr                        { $1 }
+  | expr                        { ExprAr $1 }
   | L_par prog R_par            { $2 }
-  | Minus expr %prec Uminus     { Min(Const 0, $2) }
  /* | Let Var C_eq expr In prog
                                 { Let(Id $2, $4, $6) } */
   | If exprb Then prog Else prog
@@ -56,7 +55,7 @@ exprb:
     
 expr:
   | Int                     { Const $1 }
-  | L_par prog R_par        { $2 }
+  | L_par expr R_par        { $2 }
   | expr Plus expr          { Add($1, $3) }    
   | expr Minus expr         { Min($1, $3) }
   | Minus expr %prec Uminus { Min(Const 0, $2) }
