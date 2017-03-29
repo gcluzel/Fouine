@@ -49,6 +49,7 @@ let rec interp p l =
     | Le (p1,p2) -> (interp p1 l) <= (interp p2 l)
     | Vrai -> true
     | Faux -> false
+  in
   match p with
     Const n -> n
   | Variable x -> lookup x l
@@ -56,6 +57,7 @@ let rec interp p l =
   | Mul (e1,e2) -> (interp e1 l)*(interp e2 l)
   | Min (e1,e2) -> (interp e1 l)-(interp e2 l)
   | Letin (x,p1,p2) -> interp p2 ((x, interp p1 l)::l)
+  | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
   | _ -> failwith("not implemented yet")
 
 
