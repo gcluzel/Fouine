@@ -16,11 +16,11 @@ open Expr   (* rappel: dans expr.ml:
 %token L_par R_par
 %token EOF            /* fin du fichier */
                            
-
+%nonassoc Let In
 %left Plus Minus  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left Times  /* associativité gauche: a*b*c, c'est (a*b)*c */
                                                
-%nonassoc Uminus If Then Else C_g C_ge C_l C_le C_neq Let In
+%nonassoc Uminus If Then Else C_g C_ge C_l C_le C_neq
              
                         
 %type <Expr.prog>      main
@@ -33,17 +33,17 @@ open Expr   (* rappel: dans expr.ml:
 %%
        
 main:
-    | prog EOF                { $1 } 
+    | prog EOF                  { $1 } 
 ;
 prog:
-  | expr                        { ExprAr $1 }
-  | L_par prog R_par            { $2 }
-  | Let Var C_eq prog In prog   { Letin($2, $4, $6) }
-  | If exprb Then prog Else prog
-                                { IfThenElse($2,$4,$6) }
+  | expr                          { ExprAr $1 }
+  | L_par prog R_par              { $2 }
+  | Let Var C_eq prog In prog     { Letin($2, $4, $6) }
+  | If exprb Then prog Else prog  { IfThenElse($2,$4,$6) }
   ;
 
 exprb:
+  | L_par exprb L_par       { $2 }
   | expr C_eq expr          { Eq($1, $3) }
   | expr C_g expr           { Gt($1, $3) }
   | expr C_ge expr          { Ge($1, $3) }
