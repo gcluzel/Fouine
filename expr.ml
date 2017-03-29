@@ -17,7 +17,7 @@ and exprbool =
 
 (* Le type pour les programmes fouine  et les expressions arithmétiques*)
 
-type prog =
+and prog =
     Const of int
   | Variable of var
   | Add of prog*prog
@@ -43,9 +43,9 @@ let rec affiche_prog_aux p =
     print_string "\nelse\n";
     affiche_prog_aux pelse;
   end
-    and
+    
 (* affichage d'une expression arithmétique *)
-let aff_aux s a b = 
+and aff_aux s a b = 
   begin
     print_string "(";
     affiche_prog_aux a;
@@ -100,7 +100,7 @@ let aff_aux s a b =
 					     print_string "\nelse\n";
 					     affiche_prog_aux pelse
 				   | Faux -> print_string "false)\nthen\n";
-					     affiche_prog pif;
+					     affiche_prog_aux pif;
 					     print_string "\nelse\n";
 					     affiche_prog_aux pelse
 				 end

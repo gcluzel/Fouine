@@ -31,23 +31,33 @@ let rec lookup x l =
     [] -> failwith(x^" is not defined in the current environment.\n")
   | (s,v)::lp when x=s -> v
   | (s,v)::lp -> lookup x lp
-  
-(* La fonction pour évaluer une expression arithmétique *)
 
-let rec eval e l=
-  match e with
-    Const n -> n
-  | Variable x -> lookup x l
-  | Add (e1,e2) -> (eval e1 l)+(eval e2 l)
-  | Mul (e1,e2) -> (eval e1 l)*(eval e2 l)
-  | Min (e1,e2) -> (eval e1 l)-(eval e2 l)
 
+			
 (* La fonction la plus importante : l'interpréteur ! *)
   
 let rec interp p l =
+  
+  (* fonction d'interprétation d'une expression booléenne *)
+  let interpbool b l =
+    match b with
+      Eq (p1,p2) -> (interp p1 l) = (interp p2 l)
+    | Neq (p1,p2) -> (interp p1 l) != (interp p2 l)
+    | Gt (p1,p2) -> (interp p1 l) > (interp p2 l)
+    | Ge (p1,p2) -> (interp p1 l) >= (interp p2 l)
+    | Lt (p1,p2) -> (interp p1 l) < (interp p2 l)
+    | Le (p1,p2) -> (interp p1 l) <= (interp p2 l)
+    | Vrai -> true
+    | Faux -> false
+  in
   match p with
-    ExprAr e -> eval e l
+    Const n -> n
+  | Variable x -> lookup x l
+  | Add (e1,e2) -> (interp e1 l)+(interp e2 l)
+  | Mul (e1,e2) -> (interp e1 l)*(interp e2 l)
+  | Min (e1,e2) -> (interp e1 l)-(interp e2 l)
   | Letin (x,p1,p2) -> interp p2 ((x, interp p1 l)::l)
+  | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
   | _ -> failwith("not implemented yet")
 
 
