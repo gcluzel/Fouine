@@ -2,9 +2,7 @@
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules main.ml > main.ml.depends
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules expr.ml > expr.ml.depends # cached
-# Target: expr.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:expr.cmo, file:expr.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc -c -o expr.cmo expr.ml # cached
+/usr/bin/ocamldep -modules expr.ml > expr.ml.depends
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
 /usr/bin/ocamllex -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
@@ -13,21 +11,34 @@
 /usr/bin/ocamlyacc -v parser.mly # cached
 # Target: parser.mli.depends, tags: { extension:mli, file:parser.mli, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules parser.mli > parser.mli.depends # cached
+# Target: expr.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:expr.cmo, file:expr.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o expr.cmo expr.ml
++ /usr/bin/ocamlc -c -o expr.cmo expr.ml
+File "expr.ml", line 51, characters 2-701:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a value that is not matched:
+IfThenElse (_, _, _)
 # Target: parser.cmi, tags: { byte, compile, extension:mli, file:parser.mli, interf, ocaml, quiet }
 /usr/bin/ocamlc -c -o parser.cmi parser.mli # cached
 # Target: lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o lexer.cmo lexer.ml # cached
 # Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o main.cmo main.ml
-# Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o expr.cmx expr.ml # cached
 # Target: parser.ml.depends, tags: { extension:ml, file:parser.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules parser.ml > parser.ml.depends # cached
+# Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o expr.cmx expr.ml
++ /usr/bin/ocamlopt -c -o expr.cmx expr.ml
+File "expr.ml", line 51, characters 2-701:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a value that is not matched:
+IfThenElse (_, _, _)
 # Target: parser.cmx, tags: { compile, extension:cmx, extension:ml, file:parser.cmx, file:parser.ml, implem, native, ocaml, quiet }
 /usr/bin/ocamlopt -c -o parser.cmx parser.ml
-+ /usr/bin/ocamlopt -c -o parser.cmx parser.ml
-File "parser.mly", line 39, characters 32-38:
-Error: This expression has type Expr.expr
-       but an expression was expected of type Expr.prog
-Command exited with code 2.
-# Compilation unsuccessful.
+# Target: lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:lexer.cmx, file:lexer.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o lexer.cmx lexer.ml
+# Target: main.cmx, tags: { compile, extension:cmx, extension:ml, file:main.cmx, file:main.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o main.cmx main.ml
+# Target: main.native, tags: { dont_link_with, extension:native, file:main.native, link, native, ocaml, program, quiet }
+/usr/bin/ocamlopt unix.cmxa expr.cmx parser.cmx lexer.cmx main.cmx -o main.native
+# Compilation successful.

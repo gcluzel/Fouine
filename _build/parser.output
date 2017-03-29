@@ -4,24 +4,23 @@
 
    2  prog : expr
    3       | L_par prog R_par
-   4       | Minus expr
-   5       | If exprb Then prog Else prog
+   4       | If exprb Then prog Else prog
 
-   6  exprb : expr C_eq expr
-   7        | expr C_g expr
-   8        | expr C_ge expr
-   9        | expr C_l expr
-  10        | expr C_le expr
-  11        | expr C_neq expr
+   5  exprb : expr C_eq expr
+   6        | expr C_g expr
+   7        | expr C_ge expr
+   8        | expr C_l expr
+   9        | expr C_le expr
+  10        | expr C_neq expr
 
-  12  expr : Int
-  13       | L_par prog R_par
-  14       | expr Plus expr
-  15       | expr Minus expr
-  16       | Minus expr
-  17       | expr Times expr
+  11  expr : Int
+  12       | L_par expr R_par
+  13       | expr Plus expr
+  14       | expr Minus expr
+  15       | Minus expr
+  16       | expr Times expr
 
-  18  %entry% : '\001' main
+  17  %entry% : '\001' main
 
 state 0
 	$accept : . %entry% $end  (0)
@@ -33,7 +32,7 @@ state 0
 
 
 state 1
-	%entry% : '\001' . main  (18)
+	%entry% : '\001' . main  (17)
 
 	Int  shift 3
 	If  shift 4
@@ -53,38 +52,37 @@ state 2
 
 
 state 3
-	expr : Int .  (12)
+	expr : Int .  (11)
 
-	.  reduce 12
+	.  reduce 11
 
 
 state 4
-	prog : If . exprb Then prog Else prog  (5)
+	prog : If . exprb Then prog Else prog  (4)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
-	exprb  goto 12
-	expr  goto 13
+	exprb  goto 11
+	expr  goto 12
 
 
 state 5
-	prog : Minus . expr  (4)
-	expr : Minus . expr  (16)
+	expr : Minus . expr  (15)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
-	expr  goto 14
+	expr  goto 13
 
 
 state 6
 	prog : L_par . prog R_par  (3)
-	expr : L_par . prog R_par  (13)
+	expr : L_par . expr R_par  (12)
 
 	Int  shift 3
 	If  shift 4
@@ -92,14 +90,14 @@ state 6
 	L_par  shift 6
 	.  error
 
-	prog  goto 15
-	expr  goto 9
+	prog  goto 14
+	expr  goto 15
 
 
 state 7
-	%entry% : '\001' main .  (18)
+	%entry% : '\001' main .  (17)
 
-	.  reduce 18
+	.  reduce 17
 
 
 state 8
@@ -111,9 +109,9 @@ state 8
 
 state 9
 	prog : expr .  (2)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
 
 	Plus  shift 17
 	Times  shift 18
@@ -124,83 +122,74 @@ state 9
 
 
 state 10
-	expr : Minus . expr  (16)
+	expr : L_par . expr R_par  (12)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 20
 
 
 state 11
-	expr : L_par . prog R_par  (13)
+	prog : If exprb . Then prog Else prog  (4)
 
-	Int  shift 3
-	If  shift 4
-	Minus  shift 5
-	L_par  shift 6
+	Then  shift 21
 	.  error
-
-	prog  goto 21
-	expr  goto 9
 
 
 state 12
-	prog : If exprb . Then prog Else prog  (5)
-
-	Then  shift 22
-	.  error
-
-
-state 13
-	exprb : expr . C_eq expr  (6)
-	exprb : expr . C_g expr  (7)
-	exprb : expr . C_ge expr  (8)
-	exprb : expr . C_l expr  (9)
-	exprb : expr . C_le expr  (10)
-	exprb : expr . C_neq expr  (11)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
+	exprb : expr . C_eq expr  (5)
+	exprb : expr . C_g expr  (6)
+	exprb : expr . C_ge expr  (7)
+	exprb : expr . C_l expr  (8)
+	exprb : expr . C_le expr  (9)
+	exprb : expr . C_neq expr  (10)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
 
 	Plus  shift 17
 	Times  shift 18
 	Minus  shift 19
-	C_eq  shift 23
-	C_ge  shift 24
-	C_neq  shift 25
-	C_g  shift 26
-	C_l  shift 27
-	C_le  shift 28
+	C_eq  shift 22
+	C_ge  shift 23
+	C_neq  shift 24
+	C_g  shift 25
+	C_l  shift 26
+	C_le  shift 27
 	.  error
 
 
-14: reduce/reduce conflict (reduce 4, reduce 16) on Else
-14: reduce/reduce conflict (reduce 4, reduce 16) on R_par
-14: reduce/reduce conflict (reduce 4, reduce 16) on EOF
+state 13
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : Minus expr .  (15)
+	expr : expr . Times expr  (16)
+
+	.  reduce 15
+
+
 state 14
-	prog : Minus expr .  (4)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : Minus expr .  (16)
-	expr : expr . Times expr  (17)
-
-	Else  reduce 4
-	Plus  reduce 16
-	Times  reduce 16
-	Minus  reduce 16
-	R_par  reduce 4
-	EOF  reduce 4
-
-
-state 15
 	prog : L_par prog . R_par  (3)
-	expr : L_par prog . R_par  (13)
 
-	R_par  shift 29
+	R_par  shift 28
 	.  error
+
+
+15: shift/reduce conflict (shift 29, reduce 2) on R_par
+state 15
+	prog : expr .  (2)
+	expr : L_par expr . R_par  (12)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
+
+	Plus  shift 17
+	Times  shift 18
+	Minus  shift 19
+	R_par  shift 29
 
 
 state 16
@@ -210,56 +199,53 @@ state 16
 
 
 state 17
-	expr : expr Plus . expr  (14)
+	expr : expr Plus . expr  (13)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 30
 
 
 state 18
-	expr : expr Times . expr  (17)
+	expr : expr Times . expr  (16)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 31
 
 
 state 19
-	expr : expr Minus . expr  (15)
+	expr : expr Minus . expr  (14)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 32
 
 
 state 20
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : Minus expr .  (16)
-	expr : expr . Times expr  (17)
+	expr : L_par expr . R_par  (12)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
 
-	.  reduce 16
-
-
-state 21
-	expr : L_par prog . R_par  (13)
-
-	R_par  shift 33
+	Plus  shift 17
+	Times  shift 18
+	Minus  shift 19
+	R_par  shift 29
 	.  error
 
 
-state 22
-	prog : If exprb Then . prog Else prog  (5)
+state 21
+	prog : If exprb Then . prog Else prog  (4)
 
 	Int  shift 3
 	If  shift 4
@@ -267,96 +253,123 @@ state 22
 	L_par  shift 6
 	.  error
 
-	prog  goto 34
+	prog  goto 33
 	expr  goto 9
 
 
-state 23
-	exprb : expr C_eq . expr  (6)
+state 22
+	exprb : expr C_eq . expr  (5)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
+	.  error
+
+	expr  goto 34
+
+
+state 23
+	exprb : expr C_ge . expr  (7)
+
+	Int  shift 3
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 35
 
 
 state 24
-	exprb : expr C_ge . expr  (8)
+	exprb : expr C_neq . expr  (10)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 36
 
 
 state 25
-	exprb : expr C_neq . expr  (11)
+	exprb : expr C_g . expr  (6)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 37
 
 
 state 26
-	exprb : expr C_g . expr  (7)
+	exprb : expr C_l . expr  (8)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 38
 
 
 state 27
-	exprb : expr C_l . expr  (9)
+	exprb : expr C_le . expr  (9)
 
 	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
+	Minus  shift 5
+	L_par  shift 10
 	.  error
 
 	expr  goto 39
 
 
 state 28
-	exprb : expr C_le . expr  (10)
-
-	Int  shift 3
-	Minus  shift 10
-	L_par  shift 11
-	.  error
-
-	expr  goto 40
-
-
-29: reduce/reduce conflict (reduce 3, reduce 13) on Else
-29: reduce/reduce conflict (reduce 3, reduce 13) on R_par
-29: reduce/reduce conflict (reduce 3, reduce 13) on EOF
-state 29
 	prog : L_par prog R_par .  (3)
-	expr : L_par prog R_par .  (13)
 
-	Else  reduce 3
-	Plus  reduce 13
-	Times  reduce 13
-	Minus  reduce 13
-	R_par  reduce 3
-	EOF  reduce 3
+	.  reduce 3
+
+
+state 29
+	expr : L_par expr R_par .  (12)
+
+	.  reduce 12
 
 
 state 30
-	expr : expr . Plus expr  (14)
-	expr : expr Plus expr .  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
+	expr : expr . Plus expr  (13)
+	expr : expr Plus expr .  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
+
+	Times  shift 18
+	Then  reduce 13
+	Else  reduce 13
+	Plus  reduce 13
+	Minus  reduce 13
+	C_eq  reduce 13
+	C_ge  reduce 13
+	C_neq  reduce 13
+	C_g  reduce 13
+	C_l  reduce 13
+	C_le  reduce 13
+	R_par  reduce 13
+	EOF  reduce 13
+
+
+state 31
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
+	expr : expr Times expr .  (16)
+
+	.  reduce 16
+
+
+state 32
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr Minus expr .  (14)
+	expr : expr . Times expr  (16)
 
 	Times  shift 18
 	Then  reduce 14
@@ -373,90 +386,30 @@ state 30
 	EOF  reduce 14
 
 
-state 31
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
-	expr : expr Times expr .  (17)
-
-	.  reduce 17
-
-
-state 32
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr Minus expr .  (15)
-	expr : expr . Times expr  (17)
-
-	Times  shift 18
-	Then  reduce 15
-	Else  reduce 15
-	Plus  reduce 15
-	Minus  reduce 15
-	C_eq  reduce 15
-	C_ge  reduce 15
-	C_neq  reduce 15
-	C_g  reduce 15
-	C_l  reduce 15
-	C_le  reduce 15
-	R_par  reduce 15
-	EOF  reduce 15
-
-
 state 33
-	expr : L_par prog R_par .  (13)
+	prog : If exprb Then prog . Else prog  (4)
 
-	.  reduce 13
-
-
-state 34
-	prog : If exprb Then prog . Else prog  (5)
-
-	Else  shift 41
+	Else  shift 40
 	.  error
 
 
+state 34
+	exprb : expr C_eq expr .  (5)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
+
+	Plus  shift 17
+	Times  shift 18
+	Minus  shift 19
+	Then  reduce 5
+
+
 state 35
-	exprb : expr C_eq expr .  (6)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
-
-	Plus  shift 17
-	Times  shift 18
-	Minus  shift 19
-	Then  reduce 6
-
-
-state 36
-	exprb : expr C_ge expr .  (8)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
-
-	Plus  shift 17
-	Times  shift 18
-	Minus  shift 19
-	Then  reduce 8
-
-
-state 37
-	exprb : expr C_neq expr .  (11)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
-
-	Plus  shift 17
-	Times  shift 18
-	Minus  shift 19
-	Then  reduce 11
-
-
-state 38
-	exprb : expr C_g expr .  (7)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
+	exprb : expr C_ge expr .  (7)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
 
 	Plus  shift 17
 	Times  shift 18
@@ -464,11 +417,47 @@ state 38
 	Then  reduce 7
 
 
+state 36
+	exprb : expr C_neq expr .  (10)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
+
+	Plus  shift 17
+	Times  shift 18
+	Minus  shift 19
+	Then  reduce 10
+
+
+state 37
+	exprb : expr C_g expr .  (6)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
+
+	Plus  shift 17
+	Times  shift 18
+	Minus  shift 19
+	Then  reduce 6
+
+
+state 38
+	exprb : expr C_l expr .  (8)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
+
+	Plus  shift 17
+	Times  shift 18
+	Minus  shift 19
+	Then  reduce 8
+
+
 state 39
-	exprb : expr C_l expr .  (9)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
+	exprb : expr C_le expr .  (9)
+	expr : expr . Plus expr  (13)
+	expr : expr . Minus expr  (14)
+	expr : expr . Times expr  (16)
 
 	Plus  shift 17
 	Times  shift 18
@@ -477,19 +466,7 @@ state 39
 
 
 state 40
-	exprb : expr C_le expr .  (10)
-	expr : expr . Plus expr  (14)
-	expr : expr . Minus expr  (15)
-	expr : expr . Times expr  (17)
-
-	Plus  shift 17
-	Times  shift 18
-	Minus  shift 19
-	Then  reduce 10
-
-
-state 41
-	prog : If exprb Then prog Else . prog  (5)
+	prog : If exprb Then prog Else . prog  (4)
 
 	Int  shift 3
 	If  shift 4
@@ -497,19 +474,18 @@ state 41
 	L_par  shift 6
 	.  error
 
-	prog  goto 42
+	prog  goto 41
 	expr  goto 9
 
 
-state 42
-	prog : If exprb Then prog Else prog .  (5)
+state 41
+	prog : If exprb Then prog Else prog .  (4)
 
-	.  reduce 5
+	.  reduce 4
 
 
-State 14 contains 3 reduce/reduce conflicts.
-State 29 contains 3 reduce/reduce conflicts.
+State 15 contains 1 shift/reduce conflict.
 
 
 26 terminals, 6 nonterminals
-19 grammar rules, 43 states
+18 grammar rules, 42 states

@@ -57,7 +57,7 @@ let main () =
   try
     let result = parse () in
     begin
-      affiche_prog result; print_int (interp result []); flush stdout
+      affiche_prog result; print_int (interp result []);print_newline(); flush stdout
     end
   with | e -> (print_string (Printexc.to_string e))
 		 

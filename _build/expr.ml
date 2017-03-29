@@ -106,10 +106,10 @@ let rec affiche_prog_aux p =
 				   affiche_prog pif;
 				   print_string "\nelse\n";
 				   affiche_prog pelse;
-				 end*)
+				 end*) (* Not yet implemented *)
 
 let affiche_prog p =
   begin
     affiche_prog_aux p;
-    print_string ";;";
+    print_string ";;\n";
   end
