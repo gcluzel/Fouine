@@ -61,7 +61,9 @@ let rec affiche_prog_aux p =
 				end
   | Letin (a,p1,p2) -> begin
 		    print_string "let ";
-		  (* affichage du a ??? *)
+		    print_string a;
+		    print_string "=";
+		    affiche_prog_aux p1;
 		    print_string " in\n";
 		    affiche_prog_aux p2;
 		  end
