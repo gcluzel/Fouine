@@ -32,21 +32,15 @@ let rec lookup x l =
   | (s,v)::lp when x=s -> v
   | (s,v)::lp -> lookup x lp
   
-(* La fonction pour évaluer une expression arithmétique *)
-
-let rec eval e l=
-  match e with
-    Const n -> n
-  | Variable x -> lookup x l
-  | Add (e1,e2) -> (eval e1 l)+(eval e2 l)
-  | Mul (e1,e2) -> (eval e1 l)*(eval e2 l)
-  | Min (e1,e2) -> (eval e1 l)-(eval e2 l)
-
 (* La fonction la plus importante : l'interpréteur ! *)
   
 let rec interp p l =
   match p with
-    ExprAr e -> eval e l
+    Const n -> n
+  | Variable x -> lookup x l
+  | Add (e1,e2) -> (interp e1 l)+(interp e2 l)
+  | Mul (e1,e2) -> (interp e1 l)*(interp e2 l)
+  | Min (e1,e2) -> (interp e1 l)-(interp e2 l)
   | Letin (x,p1,p2) -> interp p2 ((x, interp p1 l)::l)
   | _ -> failwith("not implemented yet")
 
