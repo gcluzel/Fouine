@@ -31,10 +31,24 @@ let rec lookup x l =
     [] -> failwith(x^" is not defined in the current environment.\n")
   | (s,v)::lp when x=s -> v
   | (s,v)::lp -> lookup x lp
-  
+
+
+			
 (* La fonction la plus importante : l'interpréteur ! *)
   
 let rec interp p l =
+  
+  (* fonction d'interprétation d'une expression booléenne *)
+  let interpbool b l =
+    match b with
+      Eq (p1,p2) -> (interp p1 l) = (interp p2 l)
+    | Neq (p1,p2) -> (interp p1 l) != (interp p2 l)
+    | Gt (p1,p2) -> (interp p1 l) > (interp p2 l)
+    | Ge (p1,p2) -> (interp p1 l) >= (interp p2 l)
+    | Lt (p1,p2) -> (interp p1 l) < (interp p2 l)
+    | Le (p1,p2) -> (interp p1 l) <= (interp p2 l)
+    | Vrai -> true
+    | Faux -> false
   match p with
     Const n -> n
   | Variable x -> lookup x l

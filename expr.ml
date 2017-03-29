@@ -12,6 +12,8 @@ and exprbool =
   | Lt of prog*prog
   | Le of prog*prog
   | Neq of prog*prog
+  | Vrai
+  | Faux
 
 (* Le type pour les programmes fouine  et les expressions arithmétiques*)
 
@@ -93,6 +95,14 @@ let aff_aux s a b =
 				   | Ge(e1,e2) -> affiche_bool ">=" e1 e2 pif pelse;
 				   | Lt(e1,e2) -> affiche_bool "<" e1 e2 pif pelse;
 				   | Le(e1,e2) -> affiche_bool "<=" e1 e2 pif pelse;
+				   | Vrai -> print_string "true)\nthen\n";
+					     affiche_prog_aux pif;
+					     print_string "\nelse\n";
+					     affiche_prog_aux pelse
+				   | Faux -> print_string "false)\nthen\n";
+					     affiche_prog pif;
+					     print_string "\nelse\n";
+					     affiche_prog_aux pelse
 				 end
 
 let affiche_prog p =
