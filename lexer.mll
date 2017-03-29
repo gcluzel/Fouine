@@ -17,8 +17,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '('             { L_par }
   | ')'             { R_par }
   | "let" 			{ Let }
-  | "in"			{ IN }
-  | ";;"			{ Enf_of_function }
+  | "in"			{ In }
   | "fun" 			{ Fun }
   | "->"			{ Right_arrow }
   | "if" 			{ If }
@@ -29,6 +28,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "let rec" 		{ Let_rec }
   | (['a'-'z']|['A'-'Z']|'_')(['a'-'z']|['A'-'Z']|'_'|['0'-'9'])*
   					{ Var s }
+  | '='                         { C_eq }
   | '>' 			{ C_g }
   | ">="			{ C_ge }
   | '<'				{ C_l }
