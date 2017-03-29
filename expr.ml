@@ -59,11 +59,11 @@ let rec affiche_prog_aux p =
 				  print_newline();
 				  affiche_prog_aux pp;
 				end
-  | Letin (a,pp) -> begin
+  | Letin (a,p1,p2) -> begin
 		    print_string "let ";
 		  (* affichage du a ??? *)
 		    print_string " in\n";
-		    affiche_prog_aux pp;
+		    affiche_prog_aux p2;
 		  end
   | RecFunction (nom,variable, pp) -> begin
 				      print_string "let rec ";

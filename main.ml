@@ -25,21 +25,29 @@ let calc () =
   with _ -> (print_string "erreur de saisie\n")
 ;;
 
+(* Fonction lookup pour chercher la valeur d'une variable dans la pile *)
+let rec lookup x l =
+  match l with
+    [] -> failwith(x^" is not defined in the current environment.\n")
+  | (s,v)::lp when x=s -> v
+  | (s,v)::lp -> lookup x lp
+  
 (* La fonction pour évaluer une expression arithmétique *)
 
-let rec eval e =
+let rec eval e l=
   match e with
     Const n -> n
-(*  | Variable v -> *) (* Not yet implemented *)
+  | Variable x -> lookup x l
   | Add (e1,e2) -> (eval e1)+(eval e2)
   | Mult (e1,e2) -> (eval e1)*(eval e2)
   | Min (e1,e2) -> (eval e1)-(eval e2)
 
 (* La fonction la plus importante : l'interpréteur ! *)
   
-let rec interp p =
+let rec interp p l =
   match p with
-    ExprAr e -> eval e
+    ExprAr e -> eval e l
+  | Letin (x,p1,p2) -> interp p2 ((x, interp p1 l)::l)
   | _ -> failwith("not implemented yet")
 
 
@@ -48,7 +56,9 @@ let rec interp p =
 let main () =
   try
     let result = parse () in
-    interp result; flush stdout
+    begin
+      affiche_prog result; interp result []; flush stdout
+    end
   with | e -> (print_string (Printexc.to_string e))
 		 
-let _ = calc()
+let _ = main()

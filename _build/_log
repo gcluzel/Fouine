@@ -1,12 +1,12 @@
 ### Starting build.
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules main.ml > main.ml.depends # cached
+/usr/bin/ocamldep -modules main.ml > main.ml.depends
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules expr.ml > expr.ml.depends
+/usr/bin/ocamldep -modules expr.ml > expr.ml.depends # cached
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
-/usr/bin/ocamllex -q lexer.mll
+/usr/bin/ocamllex -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules lexer.ml > lexer.ml.depends
+/usr/bin/ocamldep -modules lexer.ml > lexer.ml.depends # cached
 # Target: parser.mly, tags: { extension:mly, file:parser.mly, infer, ocaml, ocamlyacc, parser, quiet }
 /usr/bin/ocamlyacc -v parser.mly
 + /usr/bin/ocamlyacc -v parser.mly
