@@ -2,29 +2,27 @@
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules main.ml > main.ml.depends # cached
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules expr.ml > expr.ml.depends
+/usr/bin/ocamldep -modules expr.ml > expr.ml.depends # cached
+# Target: expr.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:expr.cmo, file:expr.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o expr.cmo expr.ml # cached
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
-/usr/bin/ocamllex -q lexer.mll # cached
+/usr/bin/ocamllex -q lexer.mll
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules lexer.ml > lexer.ml.depends # cached
+/usr/bin/ocamldep -modules lexer.ml > lexer.ml.depends
 # Target: parser.mly, tags: { extension:mly, file:parser.mly, infer, ocaml, ocamlyacc, parser, quiet }
 /usr/bin/ocamlyacc -v parser.mly # cached
 # Target: parser.mli.depends, tags: { extension:mli, file:parser.mli, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules parser.mli > parser.mli.depends # cached
-# Target: expr.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:expr.cmo, file:expr.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc -c -o expr.cmo expr.ml
-+ /usr/bin/ocamlc -c -o expr.cmo expr.ml
-File "expr.ml", line 51, characters 2-701:
-Warning 8: this pattern-matching is not exhaustive.
-Here is an example of a value that is not matched:
-IfThenElse (_, _, _)
 # Target: parser.cmi, tags: { byte, compile, extension:mli, file:parser.mli, interf, ocaml, quiet }
-/usr/bin/ocamlc -c -o parser.cmi parser.mli
+/usr/bin/ocamlc -c -o parser.cmi parser.mli # cached
 # Target: lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o lexer.cmo lexer.ml
-+ /usr/bin/ocamlc -c -o lexer.cmo lexer.ml
-File "lexer.mll", line 20, characters 15-18:
-Error: This variant expression is expected to have type Parser.token
-       The constructor Fun does not belong to type Parser.token
+# Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o main.cmo main.ml
++ /usr/bin/ocamlc -c -o main.cmo main.ml
+File "main.ml", line 42, characters 4-8:
+Error: This variant pattern is expected to have type Expr.expr
+       The constructor Mult does not belong to type Expr.expr
+Hint: Did you mean Mul?
 Command exited with code 2.
 # Compilation unsuccessful.
