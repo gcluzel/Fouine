@@ -43,12 +43,8 @@ let rec eval e l=
   | Min (e1,e2) -> (eval e1)-(eval e2)
 
 (* La fonction la plus importante : l'interpréteur ! *)
-<<<<<<< HEAD
   
 let rec interp p l =
-=======
-let rec interp p =
->>>>>>> 486b85bea49eba9592e83c86c8c67c4082881ee7
   match p with
     ExprAr e -> eval e l
   | Letin (x,p1,p2) -> interp p2 ((x, interp p1 l)::l)
