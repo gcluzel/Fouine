@@ -1,9 +1,9 @@
 (* Un type pour les noms de variable *)
 type var =
-    Nom of string
+    Id of string
 
-(* un type pour des expressions arithmétiques simples *)
-type expr =
+  (* un type pour des expressions arithmétiques simples *)
+and expr =
     Const of int
   | Variable of var
   | Add of expr*expr
@@ -11,7 +11,7 @@ type expr =
   | Min of expr*expr
 
 (* un type pour les expressions booléennes *)
-type exprbool =
+and exprbool =
     Eq of expr*expr
   | Gt of expr*expr
   | Ge of expr*expr
@@ -19,10 +19,10 @@ type exprbool =
   | Le of expr*expr
 		    
 (* Le type pour les programmes fouine *)
-type prog =
+and prog =
     ExprAr of expr
   | Function of var*prog
-  | Letin of (* que mettre là ? *)*prog
+  | Letin of var*expr*prog
   | RecFunction of var*prog
   | IfThenElse of exprbool*prog*prog
 
