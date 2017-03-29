@@ -27,16 +27,7 @@ let calc () =
 
 (* La fonction pour évaluer une expression arithmétique *)
 
-let rec eval e =
-  match e with
-    Const n -> n
-(*  | Variable v -> *) (* Not yet implemented *)
-  | Add e1 e2 -> (eval e1)+(eval e2)
-  | Mult e1 e2 -> (eval e1)*(eval e2)
-  | Min e1 e2 -> (eval e1)-(eval e2)
 
-(* La fonction la plus importante : l'interpréteur ! *)
-  
 let rec interp p =
   match p with
     ExprAr e -> eval e
