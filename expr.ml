@@ -16,6 +16,7 @@ and exprbool =
   | Ge of expr*expr
   | Lt of expr*expr
   | Le of expr*expr
+  | Neq of expr*expr
 
 (* Le type pour les programmes fouine *)
 
