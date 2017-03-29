@@ -38,9 +38,9 @@ let rec eval e l=
   match e with
     Const n -> n
   | Variable x -> lookup x l
-  | Add (e1,e2) -> (eval e1)+(eval e2)
-  | Mult (e1,e2) -> (eval e1)*(eval e2)
-  | Min (e1,e2) -> (eval e1)-(eval e2)
+  | Add (e1,e2) -> (eval e1 l)+(eval e2 l)
+  | Mul (e1,e2) -> (eval e1 l)*(eval e2 l)
+  | Min (e1,e2) -> (eval e1 l)-(eval e2 l)
 
 (* La fonction la plus importante : l'interpréteur ! *)
   
@@ -57,7 +57,7 @@ let main () =
   try
     let result = parse () in
     begin
-      affiche_prog result; interp result []; flush stdout
+      affiche_prog result; print_int (interp result []); flush stdout
     end
   with | e -> (print_string (Printexc.to_string e))
 		 
