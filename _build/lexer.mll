@@ -5,12 +5,11 @@ exception Eof;;
 }
 
 rule token = parse    (* la "fonction" aussi s'appelle token .. *)
-  | [' ' '\t']     { token lexbuf }    (* on saute les blancs et les tabulations *)
+  | [' ' '\t' '\n']     { token lexbuf }    (* on saute les blancs et les tabulations *)
  	     	   	           (* token: appel récursif *)
                                    (* lexbuf: argument implicite
                                       associé au tampon où sont
                                       lus les caractères *)
-  | '\n'            { EOL }
   | '+'             { Plus }
   | '*'             { Times }
   | '-'             { Minus }
@@ -35,4 +34,4 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "<="			{ C_le }
   | "<>" 			{ C_neq }
   | ['0'-'9']+ as s { Int (int_of_string s) }
-  | eof             { raise Eof } 
+  | eof             { EOF } 

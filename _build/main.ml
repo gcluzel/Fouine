@@ -36,7 +36,6 @@ let rec eval e =
   | Min (e1,e2) -> (eval e1)-(eval e2)
 
 (* La fonction la plus importante : l'interpréteur ! *)
-  
 let rec interp p =
   match p with
     ExprAr e -> eval e
