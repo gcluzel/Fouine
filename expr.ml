@@ -31,36 +31,62 @@ type prog =
   | IfThenElse of exprbool*prog*prog (* la condition, puis le programme du if puis le programme du else *)
 
 (* fonction d'affichage d'un programme fouine *)
-let rec affiche_prog p =
+let rec affiche_prog_aux p =
   match p with
   | ExprAr e -> affiche_expr e
   | Function (nom,variable,pp) -> begin
 				  print_string "let ";
 				  print_stirng nom;
-				  print_strinf " = fun ";
+				  print_string " = fun ";
 				  print_string variable;
 				  print_string " ->";
 				  print_newline();
-				  affiche_prog pp;
+				  affiche_prog_aux pp;
 				end
   | Letin (a,pp) -> begin
 		    print_string "let ";
 		  (* affichage du a ??? *)
 		    print_string " in\n";
-		    affiche_prog pp;
+		    affiche_prog_aux pp;
 		  end
   | RecFunction (nom,variable, pp) -> begin
 				      print_string "let rec ";
-				      print_stirng nom;
-				      print_strinf " = fun ";
+				      print_string nom;
+				      print_string " = fun ";
 				      print_string variable;
 				      print_string " ->";
 				      print_newline();
-				      affiche_prog pp;
+				      affiche_prog_aux pp;
 				    end
   | IfThenElse (cond,pif,pelse) -> begin
 				   print_string "if (";
-				   print_string "then\n";
+				   match cond with
+				     Eq (e1,e2) -> begin
+						  affiche_expr e1;
+						  print_string "=";
+						  affiche_expr e2;
+						end
+				   |  Gt (e1,e2) -> begin
+						    affiche_expr e1;
+						    print_string ">";
+						    affiche_expr e2;
+						  end
+				   | Ge (e1,e2) -> begin
+						   affiche_expr e1;
+						   print_string ">=";
+						   affiche_expr e2;
+						 end
+				   | Lt (e1,e2) -> begin
+						   affiche_expr e1;
+						   print_string "<";
+						   affiche_expr e2;
+						 end
+				   | Eq (e1,e2) -> begin
+						   affiche_expr e1;
+						   print_string "<=";
+						   affiche_expr e2;
+						 end
+				   print_string ")\nthen\n";
 				   affiche_prog pif;
 				   print_string "\nelse\n";
 				   affiche_prog pelse;
