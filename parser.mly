@@ -38,8 +38,7 @@ main:
 prog:
   | expr                        { ExprAr $1 }
   | L_par prog R_par            { $2 }
- /* | Let Var C_eq expr In prog
-                                { Let(Id $2, $4, $6) } */
+  | Let Var C_eq expr In prog   { Let(Id $2, $4, $6) }
   | If exprb Then prog Else prog
                                 { IfThenElse($2,$4,$6) }
   ;
