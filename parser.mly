@@ -8,19 +8,19 @@ open Expr   (* rappel: dans expr.ml:
 /* description des lexèmes, ceux-ci sont décrits (par vous) dans lexer.mll */
 
 %token <int> Int       /* le lexème INT a un attribut entier */
-%token <string> Var
+                          %token <string> Var
 %token Let In
 %token If Then Else
 %token Plus Times Minus
 %token C_eq C_ge C_neq C_g C_l C_le
 %token L_par R_par
 %token EOF            /* fin du fichier */
+                           
 
 %left Plus Minus  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left Times  /* associativité gauche: a*b*c, c'est (a*b)*c */
-
-%nonassoc Uminus Let In If Then Else Fun Right_arrow Let_rec C_g C_ge C_l C_le C_neq
-
+                                               
+%nonassoc Uminus If Then Else C_g C_ge C_l C_le C_neq Let In
              
                         
 %type <Expr.prog>      main
@@ -54,6 +54,7 @@ exprb:
     
 expr:
   | Int                     { Const $1 }
+  | Var                     { Variable $1 }
   | L_par expr R_par        { $2 }
   | expr Plus expr          { Add($1, $3) }    
   | expr Minus expr         { Min($1, $3) }
