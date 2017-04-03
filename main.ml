@@ -26,7 +26,7 @@ let calc () =
 ;;
 
 (* Fonction lookup pour chercher la valeur d'une variable dans la pile *)
-let rec lookup x l =
+let rec lookup:var->env->memory= fun x l ->
   match l with
     [] -> failwith(x^" is not defined in the current environment.\n")
   | (s,v)::lp when x=s -> v
@@ -36,7 +36,7 @@ let rec lookup x l =
 			
 (* La fonction la plus importante : l'interpréteur ! *)
   
-let rec interp p l =
+let rec interp:prog->env->int=fun p l ->
   
   (* fonction d'interprétation d'une expression booléenne *)
   let interpbool b l =
@@ -52,12 +52,21 @@ let rec interp p l =
   in
   match p with
     Const n -> n
-  | Variable x -> lookup x l
+  | Variable x -> begin match lookup x l with
+			  Value n -> n
+			| _ -> failwith("Trying to use a function as a variable.")
+		  end
   | Add (e1,e2) -> (interp e1 l)+(interp e2 l)
   | Mul (e1,e2) -> (interp e1 l)*(interp e2 l)
   | Min (e1,e2) -> (interp e1 l)-(interp e2 l)
-  | Letin (x,p1,p2) -> interp p2 ((x, interp p1 l)::l)
+  | Letin (x,p1,p2) -> interp p2 ((x,Value (interp p1 l))::l)
   | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
+  | Function (f,x,pfun,psuite) -> interp p ((f,Fun (x,pfun))::l)
+  | ApplyFun (f,p) -> begin
+		      match lookup f l with
+		      | Value _ -> failwith("Trying to apply something to something that isn't a function.")
+		      | Fun (x,body)-> interp body ((x,Value (interp p l))::l)
+		    end
   | _ -> failwith("not implemented yet")
 
 

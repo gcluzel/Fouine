@@ -1,9 +1,6 @@
 (* Un type pour les noms de variable *)
 type var = string
 
-  (* un type pour des expressions arithmétiques simples *)
-
-
 (* un type pour les expressions booléennes *)
 and exprbool =
     Eq of prog*prog
@@ -23,11 +20,19 @@ and prog =
   | Add of prog*prog
   | Mul of prog*prog
   | Min of prog*prog    (* Les expressions arithmétiques jusque là *)
-  | Function of var*var*prog (* nom de la fonction, nom de la variable puis la fonction proprement dite *)
+  | Function of var*var*prog*prog (* nom de la fonction, nom de la variable puis la fonction proprement dite et enfin la suite du programme *)
   | Letin of var*prog*prog (* une affection puis un programme *)
-  | RecFunction of var*var*prog (* nom de la fonction, nom de la variable, puis la fonction proprement dite *)
+  | RecFunction of var*var*prog*prog (* nom de la fonction, nom de la variable, puis la fonction proprement dite *)
   | IfThenElse of exprbool*prog*prog (* la condition, puis le programme du if puis le programme du else *)
+  | ApplyFun of var*prog (* Quand on souhaite appliquer une fonction *)
+				  
+(* un type pour ce que contient l'envrionnement, et un type pour l'envrironnement lui-même *)
+type memory =
+  Value of int
+  | Fun of var*prog
 
+type env = (var*memory) list
+				  
 				   			  
 (* fonction d'affichage d'un programme fouine *)
 let rec affiche_prog_aux p =
@@ -60,7 +65,7 @@ and aff_aux s a b =
   | Add(e1,e2) -> aff_aux "+" e1 e2
   | Mul(e1,e2) -> aff_aux "*" e1 e2
   | Min(e1,e2) -> aff_aux "-" e1 e2
-  | Function (nom,variable,pp) -> begin
+  | Function (nom,variable,pp,psuite) -> begin
 				  print_string "let ";
 				  print_string nom;
 				  print_string " = fun ";
@@ -68,6 +73,8 @@ and aff_aux s a b =
 				  print_string " ->";
 				  print_newline();
 				  affiche_prog_aux pp;
+				  print_string "\nin\n";
+				  affiche_prog_aux psuite;
 				end
   | Letin (a,p1,p2) -> begin
 		    print_string "let ";
@@ -77,7 +84,7 @@ and aff_aux s a b =
 		    print_string " in\n";
 		    affiche_prog_aux p2;
 		  end
-  | RecFunction (nom,variable, pp) -> begin
+  | RecFunction (nom,variable, pp,psuite) -> begin
 				      print_string "let rec ";
 				      print_string nom;
 				      print_string " = fun ";
@@ -85,6 +92,8 @@ and aff_aux s a b =
 				      print_string " ->";
 				      print_newline();
 				      affiche_prog_aux pp;
+				      print_string "\nin\n";
+				      affiche_prog_aux psuite;
 				    end
   | IfThenElse (cond,pif,pelse) -> begin
 				   print_string "if (";
@@ -104,6 +113,11 @@ and aff_aux s a b =
 					     print_string "\nelse\n";
 					     affiche_prog_aux pelse
 				 end
+  | ApplyFun (f,x) -> begin
+		      print_string (f^"(");
+		      affiche_prog_aux x;
+		      print_string ")\n"
+		      end
 
 let affiche_prog p =
   begin
