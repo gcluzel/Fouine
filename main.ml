@@ -61,7 +61,7 @@ let rec interp:prog->env->int=fun p l ->
   | Min (e1,e2) -> (interp e1 l)-(interp e2 l)
   | Letin (x,p1,p2) -> interp p2 ((x,Value (interp p1 l))::l)
   | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
-  | Function (f,x,pfun,psuite) -> interp p ((f,Fun (x,pfun))::l)
+  (* | Function (f,x,pfun,psuite) -> interp p ((f,Fun (x,pfun))::l)*)
   | ApplyFun (f,p) -> begin
 		      match lookup f l with
 		      | Value _ -> failwith("Trying to apply something to something that isn't a function.")
@@ -76,7 +76,8 @@ let main () =
   try
     let result = parse () in
     begin
-      affiche_prog result; print_int (interp result []);print_newline(); flush stdout
+      affiche_prog result; (*print_int (interp result []);*)
+      print_newline(); flush stdout
     end
   with | e -> (print_string (Printexc.to_string e))
 		 

@@ -17,13 +17,14 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | ')'             { R_par }
   | "let" 			{ Let }
   | "in"			{ In }
-  (* | "fun" 			{ Fun }
-  | "->"			{ Right_arrow }*)
+  | "fun" 			{ Fun }
+  | "->"			{ Right_arrow }
   | "if" 			{ If }
   | "then" 			{ Then }
   | "else"			{ Else }
   | "begin"			{ L_par }
   | "end"			{ R_par }
+  | "PrInt"                     { PrInt }
   (* | "let rec" 		{ Let_rec }*)
   | (['a'-'z']|['A'-'Z']|'_')(['a'-'z']|['A'-'Z']|'_'|['0'-'9'])* as s
   					{ Var s }
@@ -33,5 +34,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | '<'				{ C_l }
   | "<="			{ C_le }
   | "<>" 			{ C_neq }
+  | "true"                      { True }
+  | "false"                     { False }
   | ['0'-'9']+ as s { Int (int_of_string s) }
   | eof             { EOF } 
