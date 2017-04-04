@@ -21,7 +21,7 @@ and prog =
   | Mul of prog*prog
   | Min of prog*prog    (* Les expressions arithmétiques jusque là *)
   | Letin of var*prog*prog (* une affection puis un programme *)
-  | RecFunction of var*var*prog*prog (* nom de la fonction, nom de la variable, puis la fonction proprement dite *)
+  | RecFunction of var*prog*prog (* nom de la fonction, nom de la variable, puis la fonction proprement dite *)
   | IfThenElse of exprbool*prog*prog (* la condition, puis le programme du if puis le programme du else *)
   | ApplyFun of var*prog (* Quand on souhaite appliquer une fonction *)
   | Fun of var*prog      (* Pour les variables des fonctions *)
@@ -80,16 +80,13 @@ and aff_aux s a b =
 		    print_string " in\n";
 		    affiche_prog_aux p2;
 		  end
-  | RecFunction (nom,variable, pp,psuite) -> begin
+  | RecFunction (nom, pp, psuite) -> begin
 				      print_string "let rec ";
 				      print_string nom;
-				      print_string " = fun ";
-				      print_string variable;
-				      print_string " ->";
-				      print_newline();
+				      print_string " = ";
 				      affiche_prog_aux pp;
-				      print_string "\nin\n";
-				      affiche_prog_aux psuite;
+				      print_string " in\n";
+				      affiche_prog_aux psuite
 				    end
   | IfThenElse (cond,pif,pelse) -> begin
 				   print_string "if (";

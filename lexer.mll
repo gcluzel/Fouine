@@ -25,7 +25,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "begin"			{ L_par }
   | "end"			{ R_par }
   | "PrInt"                     { PrInt }
-  (* | "let rec" 		{ Let_rec }*)
+  | "let rec" 	          	{ Let_rec }
   | (['a'-'z']|['A'-'Z']|'_')(['a'-'z']|['A'-'Z']|'_'|['0'-'9'])* as s
   					{ Var s }
   | '='                         { C_eq }
