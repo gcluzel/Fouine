@@ -23,8 +23,9 @@ open Expr   (* rappel: dans expr.ml:
 %left Plus Minus  /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left Times  /* associativité gauche: a*b*c, c'est (a*b)*c */
                                                
-%nonassoc Uminus If Then Else C_g C_ge C_l C_le C_neq False True
-             
+%nonassoc Uminus
+%nonassoc If Then Else C_g C_ge C_l C_le C_neq False True
+%nonassoc Var             
                         
 %type <Expr.prog>      main
 %type <Expr.prog>      prog
@@ -41,9 +42,12 @@ open Expr   (* rappel: dans expr.ml:
 
   
 main:
-    | prog EOF                  { $1 } 
+ | prog EOF                  { $1 } 
 ;
+
+
 prog:
+  | prog prog                               { ApplyFun($1, $2) }
   | Int                  	            { Const $1 }
   | Var                                     { Variable $1 }
   | L_par prog R_par                        { $2 }
@@ -58,7 +62,7 @@ prog:
   | Let_rec Var C_eq fonction In prog       { RecFunction ($2, $4, $6) }
   | Let_rec Var fonction2 In prog           { RecFunction ($2, $3, $5) }
 ;
-  
+
 
 fonction:
   | prog                          { $1 }

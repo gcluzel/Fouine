@@ -23,7 +23,7 @@ and prog =
   | Letin of var*prog*prog (* une affection puis un programme *)
   | RecFunction of var*prog*prog (* nom de la fonction, nom de la variable, puis la fonction proprement dite *)
   | IfThenElse of exprbool*prog*prog (* la condition, puis le programme du if puis le programme du else *)
-  | ApplyFun of var*prog (* Quand on souhaite appliquer une fonction *)
+  | ApplyFun of prog*prog (* Quand on souhaite appliquer une fonction *)
   | Fun of var*prog      (* Pour les variables des fonctions *)
   | PrInt of prog    (* Pour l'affichage d'un entier *)
 		      
@@ -107,7 +107,8 @@ and aff_aux s a b =
 					     affiche_prog_aux pelse
 				 end
   | ApplyFun (f,x) -> begin
-		      print_string (f^"(");
+                      affiche_prog_aux f;
+		      print_string "(";
 		      affiche_prog_aux x;
 		      print_string ")\n"
 		      end

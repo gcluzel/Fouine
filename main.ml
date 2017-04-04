@@ -62,11 +62,16 @@ let rec interp:prog->env->int=fun p l ->
   | Letin (x,p1,p2) -> interp p2 ((x,Value (interp p1 l))::l)
   | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
   (* | Function (f,x,pfun,psuite) -> interp p ((f,Fun (x,pfun))::l)*)
-  | ApplyFun (f,p) -> begin
+ (* | ApplyFun (f,p) -> begin
 		      match lookup f l with
 		      | Value _ -> failwith("Trying to apply something to something that isn't a function.")
 		      | Fun (x,body)-> interp body ((x,Value (interp p l))::l)
-		    end
+		    end*)
+  | PrInt x -> begin
+               let valeur = interp x l in
+               print_int valeur;
+               valeur
+               end   
   | _ -> failwith("not implemented yet")
 
 
