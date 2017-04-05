@@ -17,13 +17,13 @@ open Expr   (* rappel: dans expr.ml:
 %token EOF            /* fin du fichier */
 
 
-                           
+%nonassoc Let In Let_rec
 %nonassoc PrInt
-%left Fun Right_arrow
+%right Fun Right_arrow
 %left Plus Minus          /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left Times               /* associativité gauche: a*b*c, c'est (a*b)*c */
-                                               
-%nonassoc Let In Let_rec                                                       
+
+                                                            
 %nonassoc If Then Else C_g C_ge C_l C_le C_neq False True Uminus
 %nonassoc Var
                         
@@ -32,7 +32,8 @@ open Expr   (* rappel: dans expr.ml:
 %type <Expr.exprbool>  exprb
 %type <Expr.prog>      fonction                                            
 %type <Expr.prog>      fonction2
-
+%type <Expr.prog>      apply
+%type <Expr.prog>      apply2
                          
                          
 %start main
@@ -47,11 +48,10 @@ main:
 
 
 prog:
-  | apply                                   { $1 }
   | Int                  	            { Const $1 }
   | Var                                     { Variable $1 }
   | L_par prog R_par                        { $2 }
-  | prog Plus prog          	            { Add($1, $3) }    
+  | prog Plus prog          	            { Add($1, $3) }
   | prog Minus prog        	            { Min($1, $3) }
   | Minus prog %prec Uminus	            { Min(Const 0, $2) }
   | prog Times prog        	            { Mul($1, $3) }
@@ -61,15 +61,17 @@ prog:
   | Let Var fonction2 In prog               { Letin ($2, $3, $5) }
   | Let_rec Var C_eq fonction In prog       { RecFunction ($2, $4, $6) }
   | Let_rec Var fonction2 In prog           { RecFunction ($2, $3, $5) }
+  | apply                                   { $1 }
 ;
 
 apply:
-  | apply2               { $1 }
-  | apply apply2         { ApplyFun ($1, $2) }
+  | apply apply2              { ApplyFun ($1, $2) }
+  | apply2                    { $1 }
 
 apply2:
-  | L_par prog R_par                       { $2 }
-              
+  | L_par prog R_par          { $2 }
+  | Int                       { Const $1 }
+  | Var                       { Variable $1 }
 
 fonction:
   | prog                          { $1 }
