@@ -110,7 +110,7 @@ and aff_aux s a b =
                       affiche_prog_aux f;
 		      print_string "(";
 		      affiche_prog_aux x;
-		      print_string ")\n"
+		      print_string ")"
 		      end
   | PrInt x -> begin
                print_string "PrInt(";

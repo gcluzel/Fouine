@@ -18,14 +18,14 @@ open Expr   (* rappel: dans expr.ml:
 
 
                            
-%nonassoc Let In PrInt Let_rec
+%nonassoc PrInt
 %left Fun Right_arrow
-%left Plus Minus  /* associativité gauche: a+b+c, c'est (a+b)+c */
-%left Times  /* associativité gauche: a*b*c, c'est (a*b)*c */
+%left Plus Minus          /* associativité gauche: a+b+c, c'est (a+b)+c */
+%left Times               /* associativité gauche: a*b*c, c'est (a*b)*c */
                                                
-%nonassoc Uminus
-%nonassoc If Then Else C_g C_ge C_l C_le C_neq False True
-%nonassoc Var             
+%nonassoc Let In Let_rec                                                       
+%nonassoc If Then Else C_g C_ge C_l C_le C_neq False True Uminus
+%nonassoc Var
                         
 %type <Expr.prog>      main
 %type <Expr.prog>      prog
@@ -47,7 +47,7 @@ main:
 
 
 prog:
-  | prog prog                               { ApplyFun($1, $2) }
+  | apply                                   { $1 }
   | Int                  	            { Const $1 }
   | Var                                     { Variable $1 }
   | L_par prog R_par                        { $2 }
@@ -56,13 +56,20 @@ prog:
   | Minus prog %prec Uminus	            { Min(Const 0, $2) }
   | prog Times prog        	            { Mul($1, $3) }
   | If exprb Then prog Else prog            { IfThenElse($2,$4,$6) }
-  | PrInt prog                              { PrInt $2 }
+  | PrInt prog                              { PrInt $2 } 
   | Let Var C_eq fonction In prog           { Letin ($2, $4, $6) }
   | Let Var fonction2 In prog               { Letin ($2, $3, $5) }
   | Let_rec Var C_eq fonction In prog       { RecFunction ($2, $4, $6) }
   | Let_rec Var fonction2 In prog           { RecFunction ($2, $3, $5) }
 ;
 
+apply:
+  | apply2               { $1 }
+  | apply apply2         { ApplyFun ($1, $2) }
+
+apply2:
+  | L_par prog R_par                       { $2 }
+              
 
 fonction:
   | prog                          { $1 }
