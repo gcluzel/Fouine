@@ -16,26 +16,29 @@ let lexbuf = Lexing.from_channel stdin
 
 let parse () = Parser.main Lexer.token lexbuf
 
-(* la fonction que l'on lance ci-dessous *)
-let calc () =
-  try
-      let result = parse () in
-      (* Expr.affiche_expr result; print_newline (); flush stdout *)
-	compile result; flush stdout
-  with _ -> (print_string "erreur de saisie\n")
-;;
-
 (* Fonction lookup pour chercher la valeur d'une variable dans la pile *)
 let rec lookup:var->env->valeur= fun x l ->
-  match l with
-    [] -> failwith(x^" is not defined in the current environment.\n")
-  | (s,v)::lp when x=s -> v
-  | (s,v)::lp -> lookup x lp
+  match !l with
+    [] -> failwith(x^" is not defined in the current environment.")
+  | (s, v)::lp when x=s -> v
+  (*| (s, VFun (x,body))::lp when x=s -> VFun (x,body)*)
+  | (s,v)::lp -> l:=lp;
+		 let res = lookup x l in
+		 begin
+		   l:=((s,v)::lp);
+		   res
+		 end
 
-
+let rec pop:var->env->unit = fun x l ->
+  match !l with
+    [] -> failwith("Suppressing a variable that wasn't in the environment.")
+  | (s,v)::lp when x=s -> l:=lp
+  | (s,v)::lp -> l:=lp;
+		 pop x l;
+		 l:=(s,v)::lp
 			
 (* La fonction la plus importante : l'interpréteur ! *)
-  
+
 let rec interp:prog->env->valeur=fun p l ->
   
   (* fonction d'interprétation d'une expression booléenne *)
@@ -71,8 +74,11 @@ let rec interp:prog->env->valeur=fun p l ->
 		     (VInt n1, VInt n2) -> VInt (n1-n2)
 		   | (_,_) -> failwith("Trying to substract functions.")
 		 end
-  | Letin (f,Function(x,body),p) -> interp p ((f, VFun (x,body))::l)
-  | Letin (x,p1,p2) -> interp p2 ((x,(interp p1 l))::l)
+  | Letin (x,p1,p2) -> let new_val = interp p1 l in
+		       begin
+			 l:=((x,new_val)::(!l));
+			 interp p2 l
+		       end
   | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
   | Function (x,pfun) -> VFun (x,pfun)
   | ApplyFun (f,p) -> begin
@@ -80,11 +86,15 @@ let rec interp:prog->env->valeur=fun p l ->
 			Variable s -> begin
 				     match lookup s l with
 				       VInt _ -> failwith("Trying to use a variable as a function.")
-				     | VFun (x,body) -> interp body ((x,interp p l)::l)
+				     | VFun (x,body) -> l:=((x,interp p l)::(!l));
+							interp body l
+     				      (* Il faut retirer ensuite x de l'environnement ! *)
 				   end
 		      | ApplyFun(_,_) -> begin
 					   match interp f l with
-					     VFun (y, body) -> interp body ((y,interp p l)::l)
+					     VFun (y, body) -> l:=((y, interp p l)::(!l));
+							       interp body l
+					   (* Retirer y de l'environnement *)
 					   | VInt _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
 					 end
 		      | _ -> failwith("Not the right number of arguments or not applying a function")
@@ -105,11 +115,12 @@ let main () =
     let result = parse () in
     begin
       affiche_prog result;
-      match interp result [] with
-	VInt n -> print_int n;
-		  print_newline(); flush stdout
-      | VFun (x,body) -> affiche_prog (Function (x,body));
-      print_newline(); flush stdout
+      let deb = ref [] in
+	match interp result deb with
+	  VInt n -> print_int n;
+		    print_newline(); flush stdout
+	| VFun (x,body) -> affiche_prog (Function (x,body));
+	print_newline(); flush stdout
     end
   with | e -> (print_string (Printexc.to_string e))
 		 

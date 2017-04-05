@@ -2,44 +2,42 @@
 
    1  main : prog EOF
 
-   2  prog : Int
-   3       | Var
-   4       | L_par prog R_par
-   5       | prog Plus prog
-   6       | prog Minus prog
-   7       | Minus prog
-   8       | prog Times prog
-   9       | If exprb Then prog Else prog
-  10       | PrInt prog
-  11       | Let Var C_eq fonction In prog
-  12       | Let Var fonction2 In prog
-  13       | Let_rec Var C_eq fonction In prog
-  14       | Let_rec Var fonction2 In prog
+   2  prog : prog Plus prog
+   3       | prog Minus prog
+   4       | Minus prog
+   5       | prog Times prog
+   6       | If exprb Then prog Else prog
+   7       | PrInt prog
+   8       | Let Var C_eq fonction In prog
+   9       | Let Var fonction2 In prog
+  10       | Let_rec Var C_eq fonction In prog
+  11       | Let_rec Var fonction2 In prog
+  12       | apply
 
-  15  apply : apply apply2
-  16        | apply2
+  13  apply : apply apply2
+  14        | apply2
 
-  17  apply2 : L_par prog R_par
-  18         | Int
-  19         | Var
+  15  apply2 : L_par prog R_par
+  16         | Int
+  17         | Var
 
-  20  fonction : prog
-  21           | Fun Var Right_arrow fonction
+  18  fonction : prog
+  19           | Fun Var Right_arrow fonction
 
-  22  fonction2 : Var C_eq fonction
-  23            | Var fonction2
+  20  fonction2 : Var C_eq fonction
+  21            | Var fonction2
 
-  24  exprb : False
-  25        | True
-  26        | L_par exprb L_par
-  27        | prog C_eq prog
-  28        | prog C_g prog
-  29        | prog C_ge prog
-  30        | prog C_l prog
-  31        | prog C_le prog
-  32        | prog C_neq prog
+  22  exprb : False
+  23        | True
+  24        | L_par exprb R_par
+  25        | prog C_eq prog
+  26        | prog C_g prog
+  27        | prog C_ge prog
+  28        | prog C_l prog
+  29        | prog C_le prog
+  30        | prog C_neq prog
 
-  33  %entry% : '\001' main
+  31  %entry% : '\001' main
 
 state 0
 	$accept : . %entry% $end  (0)
@@ -51,7 +49,7 @@ state 0
 
 
 state 1
-	%entry% : '\001' . main  (33)
+	%entry% : '\001' . main  (31)
 
 	Int  shift 3
 	Var  shift 4
@@ -65,6 +63,8 @@ state 1
 
 	main  goto 11
 	prog  goto 12
+	apply  goto 13
+	apply2  goto 14
 
 
 state 2
@@ -74,70 +74,27 @@ state 2
 
 
 state 3
-	prog : Int .  (2)
+	apply2 : Int .  (16)
 
-	.  reduce 2
+	.  reduce 16
 
 
 state 4
-	prog : Var .  (3)
+	apply2 : Var .  (17)
 
-	.  reduce 3
+	.  reduce 17
 
 
 state 5
-	prog : Let . Var C_eq fonction In prog  (11)
-	prog : Let . Var fonction2 In prog  (12)
-
-	Var  shift 13
-	.  error
-
-
-state 6
-	prog : PrInt . prog  (10)
-
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
-	.  error
-
-	prog  goto 14
-
-
-state 7
-	prog : Let_rec . Var C_eq fonction In prog  (13)
-	prog : Let_rec . Var fonction2 In prog  (14)
+	prog : Let . Var C_eq fonction In prog  (8)
+	prog : Let . Var fonction2 In prog  (9)
 
 	Var  shift 15
 	.  error
 
 
-state 8
-	prog : If . exprb Then prog Else prog  (9)
-
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	False  shift 16
-	True  shift 17
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 18
-	.  error
-
-	prog  goto 19
-	exprb  goto 20
-
-
-state 9
-	prog : Minus . prog  (7)
+state 6
+	prog : PrInt . prog  (7)
 
 	Int  shift 3
 	Var  shift 4
@@ -147,13 +104,44 @@ state 9
 	If  shift 8
 	Minus  shift 9
 	L_par  shift 10
+	.  error
+
+	prog  goto 16
+	apply  goto 13
+	apply2  goto 14
+
+
+state 7
+	prog : Let_rec . Var C_eq fonction In prog  (10)
+	prog : Let_rec . Var fonction2 In prog  (11)
+
+	Var  shift 17
+	.  error
+
+
+state 8
+	prog : If . exprb Then prog Else prog  (6)
+
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	False  shift 18
+	True  shift 19
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 20
 	.  error
 
 	prog  goto 21
+	exprb  goto 22
+	apply  goto 13
+	apply2  goto 14
 
 
-state 10
-	prog : L_par . prog R_par  (4)
+state 9
+	prog : Minus . prog  (4)
 
 	Int  shift 3
 	Var  shift 4
@@ -165,191 +153,211 @@ state 10
 	L_par  shift 10
 	.  error
 
-	prog  goto 22
+	prog  goto 23
+	apply  goto 13
+	apply2  goto 14
+
+
+state 10
+	apply2 : L_par . prog R_par  (15)
+
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 24
+	apply  goto 13
+	apply2  goto 14
 
 
 state 11
-	%entry% : '\001' main .  (33)
+	%entry% : '\001' main .  (31)
 
-	.  reduce 33
+	.  reduce 31
 
 
 state 12
 	main : prog . EOF  (1)
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	EOF  shift 26
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	EOF  shift 28
 	.  error
 
 
 state 13
-	prog : Let Var . C_eq fonction In prog  (11)
-	prog : Let Var . fonction2 In prog  (12)
+	prog : apply .  (12)
+	apply : apply . apply2  (13)
 
-	Var  shift 27
-	C_eq  shift 28
-	.  error
+	Int  shift 3
+	Var  shift 4
+	L_par  shift 10
+	In  reduce 12
+	Then  reduce 12
+	Else  reduce 12
+	Plus  reduce 12
+	Times  reduce 12
+	Minus  reduce 12
+	C_eq  reduce 12
+	C_ge  reduce 12
+	C_neq  reduce 12
+	C_g  reduce 12
+	C_l  reduce 12
+	C_le  reduce 12
+	R_par  reduce 12
+	EOF  reduce 12
 
-	fonction2  goto 29
+	apply2  goto 29
 
 
 state 14
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : PrInt prog .  (10)
+	apply : apply2 .  (14)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	In  reduce 10
-	Then  reduce 10
-	Else  reduce 10
-	C_eq  reduce 10
-	C_ge  reduce 10
-	C_neq  reduce 10
-	C_g  reduce 10
-	C_l  reduce 10
-	C_le  reduce 10
-	L_par  reduce 10
-	R_par  reduce 10
-	EOF  reduce 10
+	.  reduce 14
 
 
 state 15
-	prog : Let_rec Var . C_eq fonction In prog  (13)
-	prog : Let_rec Var . fonction2 In prog  (14)
+	prog : Let Var . C_eq fonction In prog  (8)
+	prog : Let Var . fonction2 In prog  (9)
 
-	Var  shift 27
-	C_eq  shift 30
+	Var  shift 30
+	C_eq  shift 31
 	.  error
 
-	fonction2  goto 31
+	fonction2  goto 32
 
 
 state 16
-	exprb : False .  (24)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : PrInt prog .  (7)
 
-	.  reduce 24
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	In  reduce 7
+	Then  reduce 7
+	Else  reduce 7
+	C_eq  reduce 7
+	C_ge  reduce 7
+	C_neq  reduce 7
+	C_g  reduce 7
+	C_l  reduce 7
+	C_le  reduce 7
+	R_par  reduce 7
+	EOF  reduce 7
 
 
 state 17
-	exprb : True .  (25)
+	prog : Let_rec Var . C_eq fonction In prog  (10)
+	prog : Let_rec Var . fonction2 In prog  (11)
 
-	.  reduce 25
+	Var  shift 30
+	C_eq  shift 33
+	.  error
+
+	fonction2  goto 34
 
 
 state 18
-	prog : L_par . prog R_par  (4)
-	exprb : L_par . exprb L_par  (26)
+	exprb : False .  (22)
+
+	.  reduce 22
+
+
+state 19
+	exprb : True .  (23)
+
+	.  reduce 23
+
+
+state 20
+	apply2 : L_par . prog R_par  (15)
+	exprb : L_par . exprb R_par  (24)
 
 	Int  shift 3
 	Var  shift 4
 	Let  shift 5
 	PrInt  shift 6
-	False  shift 16
-	True  shift 17
+	False  shift 18
+	True  shift 19
 	Let_rec  shift 7
 	If  shift 8
 	Minus  shift 9
-	L_par  shift 18
+	L_par  shift 20
 	.  error
 
-	prog  goto 32
-	exprb  goto 33
-
-
-state 19
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog . C_eq prog  (27)
-	exprb : prog . C_g prog  (28)
-	exprb : prog . C_ge prog  (29)
-	exprb : prog . C_l prog  (30)
-	exprb : prog . C_le prog  (31)
-	exprb : prog . C_neq prog  (32)
-
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	C_eq  shift 34
-	C_ge  shift 35
-	C_neq  shift 36
-	C_g  shift 37
-	C_l  shift 38
-	C_le  shift 39
-	.  error
-
-
-state 20
-	prog : If exprb . Then prog Else prog  (9)
-
-	Then  shift 40
-	.  error
+	prog  goto 35
+	exprb  goto 36
+	apply  goto 13
+	apply2  goto 14
 
 
 state 21
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : Minus prog .  (7)
-	prog : prog . Times prog  (8)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	exprb : prog . C_eq prog  (25)
+	exprb : prog . C_g prog  (26)
+	exprb : prog . C_ge prog  (27)
+	exprb : prog . C_l prog  (28)
+	exprb : prog . C_le prog  (29)
+	exprb : prog . C_neq prog  (30)
 
-	.  reduce 7
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	C_eq  shift 37
+	C_ge  shift 38
+	C_neq  shift 39
+	C_g  shift 40
+	C_l  shift 41
+	C_le  shift 42
+	.  error
 
 
 state 22
-	prog : L_par prog . R_par  (4)
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
+	prog : If exprb . Then prog Else prog  (6)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	R_par  shift 41
+	Then  shift 43
 	.  error
 
 
 state 23
-	prog : prog Plus . prog  (5)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : Minus prog .  (4)
+	prog : prog . Times prog  (5)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
-	.  error
-
-	prog  goto 42
+	.  reduce 4
 
 
 state 24
-	prog : prog Times . prog  (8)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	apply2 : L_par prog . R_par  (15)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	R_par  shift 44
 	.  error
-
-	prog  goto 43
 
 
 state 25
-	prog : prog Minus . prog  (6)
+	prog : prog Plus . prog  (2)
 
 	Int  shift 3
 	Var  shift 4
@@ -361,58 +369,77 @@ state 25
 	L_par  shift 10
 	.  error
 
-	prog  goto 44
+	prog  goto 45
+	apply  goto 13
+	apply2  goto 14
 
 
 state 26
+	prog : prog Times . prog  (5)
+
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 46
+	apply  goto 13
+	apply2  goto 14
+
+
+state 27
+	prog : prog Minus . prog  (3)
+
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 47
+	apply  goto 13
+	apply2  goto 14
+
+
+state 28
 	main : prog EOF .  (1)
 
 	.  reduce 1
 
 
-state 27
-	fonction2 : Var . C_eq fonction  (22)
-	fonction2 : Var . fonction2  (23)
-
-	Var  shift 27
-	C_eq  shift 45
-	.  error
-
-	fonction2  goto 46
-
-
-state 28
-	prog : Let Var C_eq . fonction In prog  (11)
-
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	Fun  shift 47
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
-	.  error
-
-	prog  goto 48
-	fonction  goto 49
-
-
 state 29
-	prog : Let Var fonction2 . In prog  (12)
+	apply : apply apply2 .  (13)
 
-	In  shift 50
-	.  error
+	.  reduce 13
 
 
 state 30
-	prog : Let_rec Var C_eq . fonction In prog  (13)
+	fonction2 : Var . C_eq fonction  (20)
+	fonction2 : Var . fonction2  (21)
+
+	Var  shift 30
+	C_eq  shift 48
+	.  error
+
+	fonction2  goto 49
+
+
+state 31
+	prog : Let Var C_eq . fonction In prog  (8)
 
 	Int  shift 3
 	Var  shift 4
 	Let  shift 5
-	Fun  shift 47
+	Fun  shift 50
 	PrInt  shift 6
 	Let_rec  shift 7
 	If  shift 8
@@ -420,99 +447,80 @@ state 30
 	L_par  shift 10
 	.  error
 
-	prog  goto 48
-	fonction  goto 51
-
-
-state 31
-	prog : Let_rec Var fonction2 . In prog  (14)
-
-	In  shift 52
-	.  error
+	prog  goto 51
+	fonction  goto 52
+	apply  goto 13
+	apply2  goto 14
 
 
 state 32
-	prog : L_par prog . R_par  (4)
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog . C_eq prog  (27)
-	exprb : prog . C_g prog  (28)
-	exprb : prog . C_ge prog  (29)
-	exprb : prog . C_l prog  (30)
-	exprb : prog . C_le prog  (31)
-	exprb : prog . C_neq prog  (32)
+	prog : Let Var fonction2 . In prog  (9)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	C_eq  shift 34
-	C_ge  shift 35
-	C_neq  shift 36
-	C_g  shift 37
-	C_l  shift 38
-	C_le  shift 39
-	R_par  shift 41
+	In  shift 53
 	.  error
 
 
 state 33
-	exprb : L_par exprb . L_par  (26)
+	prog : Let_rec Var C_eq . fonction In prog  (10)
 
-	L_par  shift 53
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	Fun  shift 50
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
 	.  error
+
+	prog  goto 51
+	fonction  goto 54
+	apply  goto 13
+	apply2  goto 14
 
 
 state 34
-	exprb : prog C_eq . prog  (27)
+	prog : Let_rec Var fonction2 . In prog  (11)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
+	In  shift 55
 	.  error
-
-	prog  goto 54
 
 
 state 35
-	exprb : prog C_ge . prog  (29)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	apply2 : L_par prog . R_par  (15)
+	exprb : prog . C_eq prog  (25)
+	exprb : prog . C_g prog  (26)
+	exprb : prog . C_ge prog  (27)
+	exprb : prog . C_l prog  (28)
+	exprb : prog . C_le prog  (29)
+	exprb : prog . C_neq prog  (30)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	C_eq  shift 37
+	C_ge  shift 38
+	C_neq  shift 39
+	C_g  shift 40
+	C_l  shift 41
+	C_le  shift 42
+	R_par  shift 44
 	.  error
-
-	prog  goto 55
 
 
 state 36
-	exprb : prog C_neq . prog  (32)
+	exprb : L_par exprb . R_par  (24)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
+	R_par  shift 56
 	.  error
-
-	prog  goto 56
 
 
 state 37
-	exprb : prog C_g . prog  (28)
+	exprb : prog C_eq . prog  (25)
 
 	Int  shift 3
 	Var  shift 4
@@ -525,10 +533,12 @@ state 37
 	.  error
 
 	prog  goto 57
+	apply  goto 13
+	apply2  goto 14
 
 
 state 38
-	exprb : prog C_l . prog  (30)
+	exprb : prog C_ge . prog  (27)
 
 	Int  shift 3
 	Var  shift 4
@@ -541,10 +551,12 @@ state 38
 	.  error
 
 	prog  goto 58
+	apply  goto 13
+	apply2  goto 14
 
 
 state 39
-	exprb : prog C_le . prog  (31)
+	exprb : prog C_neq . prog  (30)
 
 	Int  shift 3
 	Var  shift 4
@@ -557,10 +569,12 @@ state 39
 	.  error
 
 	prog  goto 59
+	apply  goto 13
+	apply2  goto 14
 
 
 state 40
-	prog : If exprb Then . prog Else prog  (9)
+	exprb : prog C_g . prog  (26)
 
 	Int  shift 3
 	Var  shift 4
@@ -573,144 +587,177 @@ state 40
 	.  error
 
 	prog  goto 60
+	apply  goto 13
+	apply2  goto 14
 
 
 state 41
-	prog : L_par prog R_par .  (4)
+	exprb : prog C_l . prog  (28)
 
-	.  reduce 4
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 61
+	apply  goto 13
+	apply2  goto 14
 
 
 state 42
-	prog : prog . Plus prog  (5)
-	prog : prog Plus prog .  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
+	exprb : prog C_le . prog  (29)
 
-	Times  shift 24
-	In  reduce 5
-	Then  reduce 5
-	Else  reduce 5
-	Plus  reduce 5
-	Minus  reduce 5
-	C_eq  reduce 5
-	C_ge  reduce 5
-	C_neq  reduce 5
-	C_g  reduce 5
-	C_l  reduce 5
-	C_le  reduce 5
-	L_par  reduce 5
-	R_par  reduce 5
-	EOF  reduce 5
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 62
+	apply  goto 13
+	apply2  goto 14
 
 
 state 43
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : prog Times prog .  (8)
+	prog : If exprb Then . prog Else prog  (6)
 
-	.  reduce 8
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 63
+	apply  goto 13
+	apply2  goto 14
 
 
 state 44
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog Minus prog .  (6)
-	prog : prog . Times prog  (8)
+	apply2 : L_par prog R_par .  (15)
 
-	Times  shift 24
-	In  reduce 6
-	Then  reduce 6
-	Else  reduce 6
-	Plus  reduce 6
-	Minus  reduce 6
-	C_eq  reduce 6
-	C_ge  reduce 6
-	C_neq  reduce 6
-	C_g  reduce 6
-	C_l  reduce 6
-	C_le  reduce 6
-	L_par  reduce 6
-	R_par  reduce 6
-	EOF  reduce 6
+	.  reduce 15
 
 
 state 45
-	fonction2 : Var C_eq . fonction  (22)
+	prog : prog . Plus prog  (2)
+	prog : prog Plus prog .  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	Fun  shift 47
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
-	.  error
-
-	prog  goto 48
-	fonction  goto 61
+	Times  shift 26
+	In  reduce 2
+	Then  reduce 2
+	Else  reduce 2
+	Plus  reduce 2
+	Minus  reduce 2
+	C_eq  reduce 2
+	C_ge  reduce 2
+	C_neq  reduce 2
+	C_g  reduce 2
+	C_l  reduce 2
+	C_le  reduce 2
+	R_par  reduce 2
+	EOF  reduce 2
 
 
 state 46
-	fonction2 : Var fonction2 .  (23)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : prog Times prog .  (5)
 
-	.  reduce 23
+	.  reduce 5
 
 
 state 47
-	fonction : Fun . Var Right_arrow fonction  (21)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog Minus prog .  (3)
+	prog : prog . Times prog  (5)
 
-	Var  shift 62
-	.  error
+	Times  shift 26
+	In  reduce 3
+	Then  reduce 3
+	Else  reduce 3
+	Plus  reduce 3
+	Minus  reduce 3
+	C_eq  reduce 3
+	C_ge  reduce 3
+	C_neq  reduce 3
+	C_g  reduce 3
+	C_l  reduce 3
+	C_le  reduce 3
+	R_par  reduce 3
+	EOF  reduce 3
 
 
 state 48
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	fonction : prog .  (20)
+	fonction2 : Var C_eq . fonction  (20)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	In  reduce 20
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	Fun  shift 50
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 51
+	fonction  goto 64
+	apply  goto 13
+	apply2  goto 14
 
 
 state 49
-	prog : Let Var C_eq fonction . In prog  (11)
+	fonction2 : Var fonction2 .  (21)
 
-	In  shift 63
-	.  error
+	.  reduce 21
 
 
 state 50
-	prog : Let Var fonction2 In . prog  (12)
+	fonction : Fun . Var Right_arrow fonction  (19)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
+	Var  shift 65
 	.  error
-
-	prog  goto 64
 
 
 state 51
-	prog : Let_rec Var C_eq fonction . In prog  (13)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	fonction : prog .  (18)
 
-	In  shift 65
-	.  error
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	In  reduce 18
 
 
 state 52
-	prog : Let_rec Var fonction2 In . prog  (14)
+	prog : Let Var C_eq fonction . In prog  (8)
+
+	In  shift 66
+	.  error
+
+
+state 53
+	prog : Let Var fonction2 In . prog  (9)
 
 	Int  shift 3
 	Var  shift 4
@@ -722,121 +769,20 @@ state 52
 	L_par  shift 10
 	.  error
 
-	prog  goto 66
-
-
-state 53
-	exprb : L_par exprb L_par .  (26)
-
-	.  reduce 26
+	prog  goto 67
+	apply  goto 13
+	apply2  goto 14
 
 
 state 54
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog C_eq prog .  (27)
+	prog : Let_rec Var C_eq fonction . In prog  (10)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	Then  reduce 27
-	L_par  reduce 27
+	In  shift 68
+	.  error
 
 
 state 55
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog C_ge prog .  (29)
-
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	Then  reduce 29
-	L_par  reduce 29
-
-
-state 56
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog C_neq prog .  (32)
-
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	Then  reduce 32
-	L_par  reduce 32
-
-
-state 57
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog C_g prog .  (28)
-
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	Then  reduce 28
-	L_par  reduce 28
-
-
-state 58
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog C_l prog .  (30)
-
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	Then  reduce 30
-	L_par  reduce 30
-
-
-state 59
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	exprb : prog C_le prog .  (31)
-
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	Then  reduce 31
-	L_par  reduce 31
-
-
-state 60
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : If exprb Then prog . Else prog  (9)
-
-	Else  shift 67
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	.  error
-
-
-state 61
-	fonction2 : Var C_eq fonction .  (22)
-
-	.  reduce 22
-
-
-state 62
-	fonction : Fun Var . Right_arrow fonction  (21)
-
-	Right_arrow  shift 68
-	.  error
-
-
-state 63
-	prog : Let Var C_eq fonction In . prog  (11)
+	prog : Let_rec Var fonction2 In . prog  (11)
 
 	Int  shift 3
 	Var  shift 4
@@ -849,93 +795,166 @@ state 63
 	.  error
 
 	prog  goto 69
+	apply  goto 13
+	apply2  goto 14
+
+
+state 56
+	exprb : L_par exprb R_par .  (24)
+
+	.  reduce 24
+
+
+state 57
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	exprb : prog C_eq prog .  (25)
+
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	Then  reduce 25
+	R_par  reduce 25
+
+
+state 58
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	exprb : prog C_ge prog .  (27)
+
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	Then  reduce 27
+	R_par  reduce 27
+
+
+state 59
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	exprb : prog C_neq prog .  (30)
+
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	Then  reduce 30
+	R_par  reduce 30
+
+
+state 60
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	exprb : prog C_g prog .  (26)
+
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	Then  reduce 26
+	R_par  reduce 26
+
+
+state 61
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	exprb : prog C_l prog .  (28)
+
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	Then  reduce 28
+	R_par  reduce 28
+
+
+state 62
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	exprb : prog C_le prog .  (29)
+
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	Then  reduce 29
+	R_par  reduce 29
+
+
+state 63
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : If exprb Then prog . Else prog  (6)
+
+	Else  shift 70
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	.  error
 
 
 state 64
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : Let Var fonction2 In prog .  (12)
+	fonction2 : Var C_eq fonction .  (20)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	In  reduce 12
-	Then  reduce 12
-	Else  reduce 12
-	C_eq  reduce 12
-	C_ge  reduce 12
-	C_neq  reduce 12
-	C_g  reduce 12
-	C_l  reduce 12
-	C_le  reduce 12
-	L_par  reduce 12
-	R_par  reduce 12
-	EOF  reduce 12
+	.  reduce 20
 
 
 state 65
-	prog : Let_rec Var C_eq fonction In . prog  (13)
+	fonction : Fun Var . Right_arrow fonction  (19)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
+	Right_arrow  shift 71
 	.  error
-
-	prog  goto 70
 
 
 state 66
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : Let_rec Var fonction2 In prog .  (14)
+	prog : Let Var C_eq fonction In . prog  (8)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	In  reduce 14
-	Then  reduce 14
-	Else  reduce 14
-	C_eq  reduce 14
-	C_ge  reduce 14
-	C_neq  reduce 14
-	C_g  reduce 14
-	C_l  reduce 14
-	C_le  reduce 14
-	L_par  reduce 14
-	R_par  reduce 14
-	EOF  reduce 14
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 72
+	apply  goto 13
+	apply2  goto 14
 
 
 state 67
-	prog : If exprb Then prog Else . prog  (9)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : Let Var fonction2 In prog .  (9)
 
-	Int  shift 3
-	Var  shift 4
-	Let  shift 5
-	PrInt  shift 6
-	Let_rec  shift 7
-	If  shift 8
-	Minus  shift 9
-	L_par  shift 10
-	.  error
-
-	prog  goto 71
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	In  reduce 9
+	Then  reduce 9
+	Else  reduce 9
+	C_eq  reduce 9
+	C_ge  reduce 9
+	C_neq  reduce 9
+	C_g  reduce 9
+	C_l  reduce 9
+	C_le  reduce 9
+	R_par  reduce 9
+	EOF  reduce 9
 
 
 state 68
-	fonction : Fun Var Right_arrow . fonction  (21)
+	prog : Let_rec Var C_eq fonction In . prog  (10)
 
 	Int  shift 3
 	Var  shift 4
 	Let  shift 5
-	Fun  shift 47
 	PrInt  shift 6
 	Let_rec  shift 7
 	If  shift 8
@@ -943,19 +962,20 @@ state 68
 	L_par  shift 10
 	.  error
 
-	prog  goto 48
-	fonction  goto 72
+	prog  goto 73
+	apply  goto 13
+	apply2  goto 14
 
 
 state 69
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : Let Var C_eq fonction In prog .  (11)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : Let_rec Var fonction2 In prog .  (11)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
 	In  reduce 11
 	Then  reduce 11
 	Else  reduce 11
@@ -965,56 +985,106 @@ state 69
 	C_g  reduce 11
 	C_l  reduce 11
 	C_le  reduce 11
-	L_par  reduce 11
 	R_par  reduce 11
 	EOF  reduce 11
 
 
 state 70
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : Let_rec Var C_eq fonction In prog .  (13)
+	prog : If exprb Then prog Else . prog  (6)
 
-	Plus  shift 23
-	Times  shift 24
-	Minus  shift 25
-	In  reduce 13
-	Then  reduce 13
-	Else  reduce 13
-	C_eq  reduce 13
-	C_ge  reduce 13
-	C_neq  reduce 13
-	C_g  reduce 13
-	C_l  reduce 13
-	C_le  reduce 13
-	L_par  reduce 13
-	R_par  reduce 13
-	EOF  reduce 13
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 74
+	apply  goto 13
+	apply2  goto 14
 
 
 state 71
-	prog : prog . Plus prog  (5)
-	prog : prog . Minus prog  (6)
-	prog : prog . Times prog  (8)
-	prog : If exprb Then prog Else prog .  (9)
+	fonction : Fun Var Right_arrow . fonction  (19)
 
-	.  reduce 9
+	Int  shift 3
+	Var  shift 4
+	Let  shift 5
+	Fun  shift 50
+	PrInt  shift 6
+	Let_rec  shift 7
+	If  shift 8
+	Minus  shift 9
+	L_par  shift 10
+	.  error
+
+	prog  goto 51
+	fonction  goto 75
+	apply  goto 13
+	apply2  goto 14
 
 
 state 72
-	fonction : Fun Var Right_arrow fonction .  (21)
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : Let Var C_eq fonction In prog .  (8)
 
-	.  reduce 21
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	In  reduce 8
+	Then  reduce 8
+	Else  reduce 8
+	C_eq  reduce 8
+	C_ge  reduce 8
+	C_neq  reduce 8
+	C_g  reduce 8
+	C_l  reduce 8
+	C_le  reduce 8
+	R_par  reduce 8
+	EOF  reduce 8
 
 
-Rules never reduced:
-	apply : apply apply2  (15)
-	apply : apply2  (16)
-	apply2 : L_par prog R_par  (17)
-	apply2 : Int  (18)
-	apply2 : Var  (19)
+state 73
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : Let_rec Var C_eq fonction In prog .  (10)
+
+	Plus  shift 25
+	Times  shift 26
+	Minus  shift 27
+	In  reduce 10
+	Then  reduce 10
+	Else  reduce 10
+	C_eq  reduce 10
+	C_ge  reduce 10
+	C_neq  reduce 10
+	C_g  reduce 10
+	C_l  reduce 10
+	C_le  reduce 10
+	R_par  reduce 10
+	EOF  reduce 10
+
+
+state 74
+	prog : prog . Plus prog  (2)
+	prog : prog . Minus prog  (3)
+	prog : prog . Times prog  (5)
+	prog : If exprb Then prog Else prog .  (6)
+
+	.  reduce 6
+
+
+state 75
+	fonction : Fun Var Right_arrow fonction .  (19)
+
+	.  reduce 19
 
 
 29 terminals, 9 nonterminals
-34 grammar rules, 73 states
+32 grammar rules, 76 states

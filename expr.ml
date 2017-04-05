@@ -32,7 +32,7 @@ type valeur =
   VInt of int
   | VFun of var*prog
 
-type env = (var*valeur) list
+type env = (var*valeur) list ref
 				  
 				   			  
 (* fonction d'affichage d'un programme fouine *)
@@ -73,7 +73,7 @@ and aff_aux s a b =
                       affiche_prog_aux pp
                        end
   | Letin (a, Function(x, body), p) -> begin
-				       print_string ("let "^a^"= fun "^x^"->");
+				       print_string ("let "^a^"= fun "^x^"->\n");
 				       affiche_prog_aux body;
 				       print_string "\nin\n";
 				       affiche_prog_aux p
