@@ -37,5 +37,8 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "<>" 			{ C_neq }
   | "true"                      { True }
   | "false"                     { False }
+  | ":="                        { Ref_aff }
+  | '!'                         { Bang }
+  | "ref"                       { Ref }
   | ['0'-'9']+ as s { Int (int_of_string s) }
   | eof             { EOF } 
