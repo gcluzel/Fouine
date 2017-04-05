@@ -14,6 +14,7 @@ open Expr   (* rappel: dans expr.ml:
 %token Plus Times Minus
 %token C_eq C_ge C_neq C_g C_l C_le
 %token L_par R_par
+%token Ref Ref_aff Bang
 %token EOF            /* fin du fichier */
 
 
