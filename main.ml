@@ -9,12 +9,12 @@ let compile e =
 (* stdin désigne l'entrée standard (le clavier) *)
 (* lexbuf est un canal ouvert sur stdin *)
 
-let lexbuf  = Lexing.from_channel stdin
+let lexbuf c = Lexing.from_channel c
 
 (* on enchaîne les tuyaux: lexbuf est passé à Lexer.token,
    et le résultat est donné à Parser.main *)
 
-let parse c = Parser.main Lexer.token lexbuf 
+let parse c = Parser.main Lexer.token (lexbuf c)
 
 (* Fonction lookup pour chercher la valeur d'une variable dans la pile *)
 let rec lookup:var->env->valeur= fun x l ->
@@ -112,7 +112,7 @@ let rec interp:prog->env->valeur=fun p l ->
   | PrInt x -> begin
                let n = interp x l in
                match n with
-		           VInt k -> print_int k; n
+		           VInt k -> print_int k; print_newline (); n
 	             | _ -> failwith("Trying to prInt a function or a reference.")
                end
   | LetRef (x, p1, p2) -> let new_val = interp p1 l in
@@ -141,7 +141,7 @@ let rec interp:prog->env->valeur=fun p l ->
 
 (* Fonction main : celle qui est lancée lors de l'exécution *)
 		 
-let main () =
+(*let main () =
   try
     let result = parse () in
     begin
@@ -154,7 +154,7 @@ let main () =
 	| VRef _ -> print_string "A reference cannot be printed";
 	print_newline(); flush stdout
     end
-  with | e -> (print_string (Printexc.to_string e))
+  with | e -> (print_string (Printexc.to_string e))*)
  
 
 (* aide pour l'utilisation du programme *)
@@ -163,7 +163,7 @@ let print_help () =
 
 
 (* Fonction pour l'option debug qui affiche simplement le programme*)
-(*let opt_debug () =
+let opt_debug () =
   try
     let c = open_in Sys.argv.(2) in
     let result = parse c in
@@ -179,9 +179,10 @@ let no_opt () =
     let result = parse c in
     let deb = ref [] in
     match interp result deb with
-       VInt n -> print_int n;
+        VInt n -> print_int n;
 		    print_newline(); flush stdout
-	| VFun (x,body) -> affiche_prog (Function (x,body));
+	  | VFun (x,body) -> affiche_prog (Function (x,body));
+	  | VRef _ -> print_string "A reference cannot be printed";
 	print_newline(); flush stdout
   with | e -> (print_string (Printexc.to_string e))
                       
@@ -192,6 +193,6 @@ let main () =
     | "-debug" -> opt_debug()
     | _ -> no_opt ()
   with
-  | _ -> print_help ()*)
+  | _ -> print_help ()
     
 let _ = main()
