@@ -113,9 +113,9 @@ and aff_aux s a b =
 					     affiche_prog_aux pelse
 				 end
   | ApplyFun (f,x) -> begin
-		      print_string "(";
+		      print_string "((";
                       affiche_prog_aux f;
-		      print_string " (";
+		      print_string ") (";
 		      affiche_prog_aux x;
 		      print_string "))"
 		    end
