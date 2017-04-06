@@ -14,7 +14,7 @@ open Expr   (* rappel: dans expr.ml:
 %token Plus Times Minus
 %token C_eq C_ge C_neq C_g C_l C_le
 %token L_par R_par
-%token Ref Ref_aff Bang
+%token Ref Ref_aff Bang Pt_virg
 %token EOF            /* fin du fichier */
 
 
@@ -64,6 +64,8 @@ prog:
   | Let Var fonction2 In prog                   { Letin ($2, $3, $5) }
   | Let_rec Var C_eq fonction In prog           { RecFunction ($2, $4, $6) }
   | Let_rec Var fonction2 In prog               { RecFunction ($2, $3, $5) }
+  | Let Var C_eq Ref prog In prog               { Letref($2, $5, $7) }
+  | Var Ref_aff prog Pt_virg prog               { RefAff($1, $3, $5) }
   | apply1                                      { $1 }
 ;
 
@@ -77,6 +79,7 @@ apply2:
   | L_par prog R_par          { $2 }
   | Int                       { Const $1 }
   | Var                       { Variable $1 }
+  | Bang Var                  { Bang($2) }
 ;
   
 fonction:
