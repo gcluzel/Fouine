@@ -64,7 +64,7 @@ prog:
   | Let Var fonction2 In prog                   { Letin ($2, $3, $5) }
   | Let_rec Var C_eq fonction In prog           { RecFunction ($2, $4, $6) }
   | Let_rec Var fonction2 In prog               { RecFunction ($2, $3, $5) }
-  | Let Var C_eq Ref prog In prog               { Letref($2, $5, $7) }
+  | Let Var C_eq Ref prog In prog               { LetRef($2, $5, $7) }
   | Var Ref_aff prog Pt_virg prog               { RefAff($1, $3, $5) }
   | apply1                                      { $1 }
 ;

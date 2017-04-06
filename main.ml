@@ -36,7 +36,16 @@ let rec pop:var->env->unit = fun x l ->
   | (s,v)::lp -> l:=lp;
 		 pop x l;
 		 l:=(s,v)::lp
-			
+
+
+let rec update (x : var) (l : env) (v : valeur) = 
+  match !l with
+  | [] -> failwith("The reference " ^ x ^ "is not in the current environment")
+  | (s,VRef vv)::lp when s = x -> l := (s, v) :: lp
+  | (s,vv)::lp -> l := lp;
+                 update x l v;
+                 l := (s,vv)::lp
+
 (* La fonction la plus importante : l'interpréteur ! *)
 
 let rec interp:prog->env->valeur=fun p l ->
@@ -89,22 +98,44 @@ let rec interp:prog->env->valeur=fun p l ->
 				     | VFun (x,body) -> l:=((x,interp p l)::(!l));
 							interp body l
      				      (* Il faut retirer ensuite x de l'environnement ! *)
+     				 | VRef _ -> failwith("Trying to use a reference as a fonction.")
 				   end
 		      | ApplyFun(_,_) -> begin
 					   match interp f l with
 					     VFun (y, body) -> l:=((y, interp p l)::(!l));
 							       interp body l
 					   (* Retirer y de l'environnement *)
-					   | VInt _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
+					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
 					 end
 		      | _ -> failwith("Not the right number of arguments or not applying a function")
 		    end
   | PrInt x -> begin
                let n = interp x l in
                match n with
-		 VInt k -> print_int k; n
-	       | _ -> failwith("Trying to prInt a function.")
-               end   
+		           VInt k -> print_int k; n
+	             | _ -> failwith("Trying to prInt a function or a reference.")
+               end
+  | LetRef (x, p1, p2) -> let new_val = interp p1 l in
+                          begin
+                            match new_val with
+                            | VInt n -> begin
+                                        l := (x, VRef n) :: !l;
+     	                                interp p2 l
+     	                                end
+                            | _ -> failwith("Impossible to assign a ref from a function or a ref")
+                          end
+  | Bang x -> begin
+               match lookup x l with
+               | VRef n -> VInt n
+               | _ -> failwith("Trying to deference a non-reference object.")
+               end
+  | RefAff (x, p1, p2) -> begin
+                           begin match interp p1 l with
+                             | VInt n -> update x l (VRef n)
+                             | _ -> failwith("Affectation error : the right member is not an interger")
+                             end;
+                           interp p2 l
+                           end
   | _ -> failwith("not implemented yet")
 
 
@@ -119,7 +150,8 @@ let main () =
 	match interp result deb with
 	  VInt n -> print_int n;
 		    print_newline(); flush stdout
-	| VFun (x,body) -> affiche_prog (Function (x,body));
+	| VFun (x,body) -> affiche_prog (Function (x,body))
+	| VRef _ -> print_string "A reference cannot be printed";
 	print_newline(); flush stdout
     end
   with | e -> (print_string (Printexc.to_string e))

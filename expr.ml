@@ -26,15 +26,16 @@ and prog =
   | ApplyFun of prog*prog (* Quand on souhaite appliquer une fonction *)
   | Function of var*prog    (* La variable de la fonction et son programme (qui peut être une autre fun d'ailleurs si il y a plusieurs arguments) *)
   | PrInt of prog    (* Pour l'affichage d'un entier *)
-  | Letref of var*prog*prog (* Pour les références *)
+  | LetRef of var*prog*prog (* Pour les références *)
   | Bang of var    (* Pour déréférencer *)
   | RefAff of var*prog*prog (* On affecte un programme à une variable puis un programme suit *)
            
 		      
 (* un type pour ce que contient l'envrionnement, et un type pour l'envrironnement lui-même *)
 type valeur =
-  VInt of int
+    VInt of int
   | VFun of var*prog
+  | VRef of int
 
 type env = (var*valeur) list ref
 				  
@@ -130,7 +131,7 @@ and aff_aux s a b =
                affiche_prog_aux x;
                print_string ")\n"
                end
-  | Letref (x, p1, p2) -> begin
+  | LetRef (x, p1, p2) -> begin
                           print_string "Let ";
                           print_string x;
                           print_string " = ref ";
