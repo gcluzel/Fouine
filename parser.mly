@@ -14,7 +14,7 @@ open Expr   (* rappel: dans expr.ml:
 %token Plus Times Minus
 %token C_eq C_ge C_neq C_g C_l C_le
 %token L_par R_par
-%token Ref Ref_aff Bang
+%token Ref Ref_aff Bang Pt_virg
 %token EOF            /* fin du fichier */
 
 
@@ -38,7 +38,7 @@ open Expr   (* rappel: dans expr.ml:
 %type <Expr.exprbool>  exprb
 %type <Expr.prog>      fonction                                            
 %type <Expr.prog>      fonction2
-%type <Expr.prog>      apply
+%type <Expr.prog>      apply1
 %type <Expr.prog>      apply2
                          
                          
@@ -54,28 +54,32 @@ main:
 
 
 prog:
-  | prog Plus prog          	            { Add($1, $3) }
-  | prog Minus prog        	            { Min($1, $3) }
-  | Minus prog %prec Uminus	            { Min(Const 0, $2) }
-  | prog Times prog        	            { Mul($1, $3) }
-  | If exprb Then prog Else prog            { IfThenElse($2,$4,$6) }
-  | PrInt prog                              { PrInt $2 } 
-  | Let Var C_eq fonction In prog           { Letin ($2, $4, $6) }
-  | Let Var fonction2 In prog               { Letin ($2, $3, $5) }
-  | Let_rec Var C_eq fonction In prog       { RecFunction ($2, $4, $6) }
-  | Let_rec Var fonction2 In prog           { RecFunction ($2, $3, $5) }
-  | apply                                   { $1 } 
+  | prog Plus prog          	                { Add($1, $3) }
+  | prog Minus prog        	                { Min($1, $3) }
+  | Minus prog %prec Uminus	                { Min(Const 0, $2) }
+  | prog Times prog        	                { Mul($1, $3) }
+  | If exprb Then prog Else prog                { IfThenElse($2,$4,$6) }
+  | PrInt prog                                  { PrInt $2 } 
+  | Let Var C_eq fonction In prog               { Letin ($2, $4, $6) }
+  | Let Var fonction2 In prog                   { Letin ($2, $3, $5) }
+  | Let_rec Var C_eq fonction In prog           { RecFunction ($2, $4, $6) }
+  | Let_rec Var fonction2 In prog               { RecFunction ($2, $3, $5) }
+  | Let Var C_eq Ref prog In prog               { LetRef($2, $5, $7) }
+  | Var Ref_aff prog Pt_virg prog               { RefAff($1, $3, $5) }
+  | apply1                                      { $1 }
 ;
 
-apply:
-  | apply apply2              { ApplyFun ($1, $2) }
-  | apply2                    { $1 }
-;
+apply1:
+  | L_par Fun Var Right_arrow fonction R_par apply2
+                            { ApplyFun(Function($3, $5), $7) }
+  | apply1 apply2           { ApplyFun($1, $2) }
+  | apply2                  { $1 }
   
 apply2:
   | L_par prog R_par          { $2 }
   | Int                       { Const $1 }
   | Var                       { Variable $1 }
+  | Bang Var                  { Bang($2) }
 ;
   
 fonction:
@@ -89,8 +93,8 @@ fonction2:
 ;
         
 exprb:
-  | False                   { Vrai }
-  | True                    { Faux }
+  | True                    { Vrai }
+  | False                   { Faux }
   | L_par exprb R_par       { $2 }
   | prog C_eq prog          { Eq($1, $3) }
   | prog C_g prog           { Gt($1, $3) }

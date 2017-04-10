@@ -27,8 +27,6 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "end"			{ R_par }
   | "PrInt"                     { PrInt }
   | "let rec" 	          	{ Let_rec }
-  | (['a'-'z']|['A'-'Z']|'_')(['a'-'z']|['A'-'Z']|'_'|['0'-'9'])* as s
-  					{ Var s }
   | '='                         { C_eq }
   | '>' 			{ C_g }
   | ">="			{ C_ge }
@@ -39,6 +37,8 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "false"                     { False }
   | ":="                        { Ref_aff }
   | '!'                         { Bang }
+  | ';'							{ Pt_virg }
   | "ref"                       { Ref }
   | ['0'-'9']+ as s { Int (int_of_string s) }
+  | (['a'-'z']|['A'-'Z']|'_')(['a'-'z']|['A'-'Z']|'_'|['0'-'9'])* as s  { Var s }
   | eof             { EOF } 

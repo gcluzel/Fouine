@@ -26,11 +26,16 @@ and prog =
   | ApplyFun of prog*prog (* Quand on souhaite appliquer une fonction *)
   | Function of var*prog    (* La variable de la fonction et son programme (qui peut être une autre fun d'ailleurs si il y a plusieurs arguments) *)
   | PrInt of prog    (* Pour l'affichage d'un entier *)
+  | LetRef of var*prog*prog (* Pour les références *)
+  | Bang of var    (* Pour déréférencer *)
+  | RefAff of var*prog*prog (* On affecte un programme à une variable puis un programme suit *)
+           
 		      
 (* un type pour ce que contient l'envrionnement, et un type pour l'envrironnement lui-même *)
 type valeur =
-  VInt of int
+    VInt of int
   | VFun of var*prog
+  | VRef of int
 
 type env = (var*valeur) list ref
 				  
@@ -55,7 +60,9 @@ and aff_aux s a b =
   begin
     print_string "(";
     affiche_prog_aux a;
+    print_string " ";
     print_string s;
+    print_string " ";
     affiche_prog_aux b;
     print_string ")"
   end
@@ -113,9 +120,9 @@ and aff_aux s a b =
 					     affiche_prog_aux pelse
 				 end
   | ApplyFun (f,x) -> begin
-		      print_string "(";
+		      print_string "((";
                       affiche_prog_aux f;
-		      print_string " (";
+		      print_string ") (";
 		      affiche_prog_aux x;
 		      print_string "))"
 		    end
@@ -124,7 +131,27 @@ and aff_aux s a b =
                affiche_prog_aux x;
                print_string ")\n"
                end
-
+  | LetRef (x, p1, p2) -> begin
+                          print_string "Let ";
+                          print_string x;
+                          print_string " = ref ";
+                          affiche_prog_aux p1;
+                          print_string " in\n";
+                          affiche_prog_aux  p2
+                          end
+  | Bang(x) -> begin
+               print_string "!";
+               print_string x
+               end
+  | RefAff(x, p1, p2) -> begin
+                         print_string x;
+                         print_string " := ";
+                         affiche_prog_aux p1;
+                         print_string ";\n";
+                         affiche_prog_aux p2;
+                         end
+                         
+                 
                         
 let affiche_prog p =
   begin

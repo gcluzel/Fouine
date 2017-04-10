@@ -1,0 +1,34 @@
+
+Nous avons tout implémenté de base, ainsi que les références pour enrichir le langage.
+Dans les références nous avons modifié quelques peu les choses pour mieux coller
+avec OCaml
+ - a := 4 ne renvoie pas 4, mais ne renvoie rien, il faut dans ce cas faire a := 4 ; !a
+   Cela évite de faire ce qui est non recommandé par le sujet, à savoir 3 + (a := 4)
+ - S'utilise toujours de la manière suivante :
+            let a = ref 
+
+=============================================
+               Interpréteur
+=============================================
+Partie de Julien Devevey
+
+À compléter par le principal intéressé.
+
+=============================================
+               Parser / Lexer
+=============================================
+Partie de Guillaume Cluzel
+
+Le parser fonctionne très bien. Le lexer aussi. Il n'y a pas de bogue là dessus.
+
+
+=============================================
+                   Exemples
+=============================================
+Guillaume Cluzel
+
+De nombreux exemples sont dans le dossier "test" pour tester le programme.
+ - fact.ml : implémentation de la factorielle
+ - eval_func.ml : évaluation de fonction
+ - anonymous_fun.ml : évaluation d'un fonction anonyme
+ - reference.ml : utilisation de références
