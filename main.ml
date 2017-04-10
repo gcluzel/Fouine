@@ -86,9 +86,9 @@ let rec interp:prog->env->valeur=fun p l ->
 			Variable s -> begin
 				     match lookup s l with
 				       VInt _ -> failwith("Trying to use a variable as a function.")
-				     | VFun (x,body) -> l:=((x,interp p l)::(!l));
-							interp body l
-     				      (* Il faut retirer ensuite x de l'environnement ! *)
+				     | VFun (x,body) -> let fenv = ref [(x, interp p l)] in
+							interp body fenv
+(* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
 				   end
 		      | ApplyFun(_,_) -> begin
 					   match interp f l with
