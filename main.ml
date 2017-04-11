@@ -29,6 +29,7 @@ let rec lookup:var->env->valeur= fun x l ->
 		   res
 		 end
 
+(* retire une valeur de la mémoire*)
 let rec pop:var->env->unit = fun x l ->
   match !l with
     [] -> failwith("Suppressing a variable that wasn't in the environment.")
@@ -36,7 +37,7 @@ let rec pop:var->env->unit = fun x l ->
   | (s,v)::lp -> l:=lp;
 		 pop x l;
 		 l:=(s,v)::lp
-
+ 
 
 let rec update (x : var) (l : env) (n : int) = 
   match !l with
