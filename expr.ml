@@ -36,7 +36,7 @@ type valeur =
     VInt of int
   | VFun of var*prog
   | VFunR of var*prog (* type pour les fonctions récursives *)
-  | VRef of int
+  | VRef of (int ref)
 	      
 type env = (var*valeur) list ref
 				  
