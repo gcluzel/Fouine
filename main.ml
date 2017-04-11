@@ -95,16 +95,31 @@ let rec interp:prog->env->valeur=fun p l ->
 			Variable s -> begin
 				     match lookup s l with
 				       VInt _ -> failwith("Trying to use a variable as a function.")
-				     | VFun (x,body) -> let fenv = ref [(x, interp p l)] in
-							interp body fenv
-(* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
-     				 | VRef _ -> failwith("Trying to use a reference as a fonction.")
+				     | VFun (x,body) -> let fenv = [(x, interp p l)] and lanc = !l in
+							begin
+							  l:= fenv;
+							  match interp body l with
+							    VFun (y,bodyp) -> VFun (y,bodyp)
+							  | VInt n -> l:= lanc;
+								      VInt n
+							  | VRef r -> l:= lanc;
+								      VRef r
+							end
+				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
+     				     | VRef _ -> failwith("Trying to use a reference as a fonction.")
 				   end
 		      | ApplyFun(_,_) -> begin
+					 let lanc = !l in
 					   match interp f l with
-					     VFun (y, body) -> l:=((y, interp p l)::(!l));
-							       interp body l
-					   (* Retirer y de l'environnement *)
+					     VFun (y, body) -> begin
+							      l:=((y, interp p l)::(!l));
+							      match interp body l with
+								VFun (z, bodyp) -> VFun (y, bodyp)
+							      | VInt n -> l:=lanc;
+									  VInt n
+							      |VRef r -> l:=lanc;
+									 VRef r
+							    end
 					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
 					 end
 		      | _ -> failwith("Not the right number of arguments or not applying a function")
