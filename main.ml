@@ -141,7 +141,19 @@ let rec interp:prog->env->valeur=fun p l ->
 									 VRef r
 							    end
 					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
-					 end
+				       end
+		      | Function(x,body) -> let fenv = [(x, interp p l)] and lanc = !l in
+							begin
+							  l:= fenv;
+							  match interp body l with
+							    VFun (y,bodyp) -> VFun (y,bodyp)
+							  | VFunR (y, bodyp) -> VFunR (y, bodyp)
+							  | VInt n -> l:= lanc;
+								      VInt n
+							  | VRef r -> l:= lanc;
+								      VRef r
+							end
+				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
 		      | _ -> failwith("Not the right number of arguments or not applying a function")
 		    end
   | PrInt x -> begin

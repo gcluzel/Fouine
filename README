@@ -12,7 +12,7 @@ avec OCaml
 =============================================
 Partie de Julien Devevey
 
-À compléter par le principal intéressé.
+Lors de la compilation, deux warning apparaissent (pour la même chose d'ailleurs), mais c'est uniquement parce qu'il y a des cas généraux dans des match qui sont prévu pour les fois où de nouvelles fonctionnalités sont ajoutées au parser mais pas à l'interpréteur. Donc pas de soucis à se faire de ce côté.
 
 =============================================
                Parser / Lexer
