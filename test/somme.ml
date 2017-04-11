@@ -1,20 +1,20 @@
-let rec f n m =
-let a= ref 0 in 
+let s = ref 0 in
+let rec somme n m =
   if n = 0 then
     begin
       if m = 0 then
-	!a 
+	!s 
       else
         begin
-          a := (!a + 1);
-          f 0 (m-1)
+          s := (!s + 1);
+          somme 0 (m-1)
         end
     end
   else
     begin
-      a := (!a + 1);
-      f (n-1) m
+      s := (!s + 1);
+      somme (n-1) m
     end in
-f 15 36;;
+somme 15 36;;
   
-	
+  (*Somme de deux entiers. C'est nul de faire comme ça, mais c'est juste pour tester que ça marche bien*) 

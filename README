@@ -5,14 +5,16 @@ avec OCaml
  - a := 4 ne renvoie pas 4, mais ne renvoie rien, il faut dans ce cas faire a := 4 ; !a
    Cela évite de faire ce qui est non recommandé par le sujet, à savoir 3 + (a := 4)
  - S'utilise toujours de la manière suivante :
-            let a = ref 
+            let a = ref ... in
+            	a := !a + 1;
+            	!a
 
 =============================================
                Interpréteur
 =============================================
 Partie de Julien Devevey
 
-Lors de la compilation, deux warning apparaissent (pour la même chose d'ailleurs), mais c'est uniquement parce qu'il y a des cas généraux dans des match qui sont prévu pour les fois où de nouvelles fonctionnalités sont ajoutées au parser mais pas à l'interpréteur. Donc pas de soucis à se faire de ce côté.
+L'interpréteur fonctionne parfaitement bien.
 
 =============================================
                Parser / Lexer
@@ -25,10 +27,11 @@ Le parser fonctionne très bien. Le lexer aussi. Il n'y a pas de bogue là dessu
 =============================================
                    Exemples
 =============================================
-Guillaume Cluzel
 
 De nombreux exemples sont dans le dossier "test" pour tester le programme.
  - fact.ml : implémentation de la factorielle
+ - fact2.ml : une autre implémentation de la factorielle
  - eval_func.ml : évaluation de fonction
  - anonymous_fun.ml : évaluation d'un fonction anonyme
  - reference.ml : utilisation de références
+ - somme.ml : somme deux élements à l'aide de références, des fonctions récursives ainsi que des if then else.

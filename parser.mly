@@ -46,12 +46,12 @@ open Expr   (* rappel: dans expr.ml:
 %%
 
 
-  
+ /* Point d'entrée du parser */  
 main:
  | prog EOF                  { $1 } 
 ;
 
-
+ /* Structure générale d'un programme */
 prog:
   | prog Plus prog          	                { Add($1, $3) }
   | prog Minus prog        	                { Min($1, $3) }
@@ -68,29 +68,34 @@ prog:
   | apply1                                      { $1 }
 ;
 
+ /* pour l'application de fonctoins */
 apply1:
   | L_par Fun Var Right_arrow fonction R_par apply2
                             { ApplyFun(Function($3, $5), $7) }
   | apply1 apply2           { ApplyFun($1, $2) }
   | apply2                  { $1 }
-  
+
+ /* suite des arguments dans l'évaluation de fonctions */
 apply2:
   | L_par prog R_par          { $2 }
   | Int                       { Const $1 }
   | Var                       { Variable $1 }
   | Bang Var                  { Bang($2) }
 ;
-  
+ 
+ /* Déclaration d'une fonction à un ou plusieurs arguments */
 fonction:
   | prog                          { $1 }
   | Fun Var Right_arrow fonction  { Function($2, $4) }
 ;
 
+ /* Autres arguemnts dans la déclaration d'une fonction */
 fonction2:
   | Var C_eq fonction          { Function($1, $3) }
   | Var fonction2              { Function($1, $2) }
 ;
-        
+ 
+ /* Règles pour les expressions booléennes */
 exprb:
   | True                    { Vrai }
   | False                   { Faux }
