@@ -219,7 +219,6 @@ let rec interp:prog->env->valeur=fun p l ->
                              end;
                            interp p2 l
                            end
-  | _ -> failwith("not implemented yet")
 
 
  

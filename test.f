@@ -1,1 +1,1 @@
-let x = (let y = 3 in y) in y
+let a = 2 in let f x = x + a in f 2
