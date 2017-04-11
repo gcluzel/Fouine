@@ -1,15 +1,21 @@
 open Expr
+
 let compile e =
   begin
     affiche_prog e;
     print_newline();
   end
-(* stdin dÃ©signe l'entrÃ©e standard (le clavier) *)
+
+(* stdin désigne l'entrée standard (le clavier) *)
 (* lexbuf est un canal ouvert sur stdin *)
+
 let lexbuf c = Lexing.from_channel c
-(* on enchaÃ®ne les tuyaux: lexbuf est passÃ© Ã  Lexer.token,
-   et le rÃ©sultat est donnÃ© Ã  Parser.main *)
+
+(* on enchaîne les tuyaux: lexbuf est passé à Lexer.token,
+   et le résultat est donné à Parser.main *)
+
 let parse c = Parser.main Lexer.token (lexbuf c)
+
 (* Fonction lookup pour chercher la valeur d'une variable dans la pile *)
 let rec lookup:var->env->valeur= fun x l ->
   match !l with
@@ -22,6 +28,7 @@ let rec lookup:var->env->valeur= fun x l ->
 		   l:=((s,v)::lp);
 		   res
 		 end
+
 let rec pop:var->env->unit = fun x l ->
   match !l with
     [] -> failwith("Suppressing a variable that wasn't in the environment.")
@@ -29,6 +36,8 @@ let rec pop:var->env->unit = fun x l ->
   | (s,v)::lp -> l:=lp;
 		 pop x l;
 		 l:=(s,v)::lp
+
+
 let rec update (x : var) (l : env) (v : valeur) = 
   match !l with
   | [] -> failwith("The reference " ^ x ^ "is not in the current environment")
@@ -36,10 +45,12 @@ let rec update (x : var) (l : env) (v : valeur) =
   | (s,vv)::lp -> l := lp;
                  update x l v;
                  l := (s,vv)::lp
-(* La fonction la plus importante : l'interprÃ©teur ! *)
+
+(* La fonction la plus importante : l'interpréteur ! *)
+
 let rec interp:prog->env->valeur=fun p l ->
   
-  (* fonction d'interprÃ©tation d'une expression boolÃ©enne *)
+  (* fonction d'interprétation d'une expression booléenne *)
   let interpbool b l =
     match b with
       Eq (p1,p2) -> (interp p1 l) = (interp p2 l)
@@ -102,7 +113,7 @@ let rec interp:prog->env->valeur=fun p l ->
 							  | VRef r -> l:= lanc;
 								      VRef r
 							end
-				     (* On crÃ©e en fait un nouvel environnement d'exÃ©cution car on fait un appel fonction *)
+				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
 				     | VFunR (x, body) -> let fenv = (s, VFunR (x,body))::[(x, interp p l)] and lanc = !l in
 							begin
 							  l:= fenv;
@@ -142,7 +153,7 @@ let rec interp:prog->env->valeur=fun p l ->
 							  | VRef r -> l:= lanc;
 								      VRef r
 							end
-				     (* On crÃ©e en fait un nouvel environnement d'exÃ©cution car on fait un appel fonction *)
+				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
 		      | _ -> failwith("Not the right number of arguments or not applying a function")
 		    end
   | PrInt x -> begin
@@ -173,7 +184,9 @@ let rec interp:prog->env->valeur=fun p l ->
                            interp p2 l
                            end
   | _ -> failwith("not implemented yet")
-(* Fonction main : celle qui est lancÃ©e lors de l'exÃ©cution *)
+
+
+(* Fonction main : celle qui est lancée lors de l'exécution *)
 		 
 (*let main () =
   try
@@ -190,9 +203,12 @@ let rec interp:prog->env->valeur=fun p l ->
     end
   with | e -> (print_string (Printexc.to_string e))*)
  
+
 (* aide pour l'utilisation du programme *)
 let print_help () =
-  print_string "./interp [option] fichier \nOptions :\n   -debug : pour afficher le programme en entrÃ©e\n   -machine : Compile le programme et l'exÃ©cute\n   -interm : affiche le programme compilÃ© sans l'exÃ©cuter.\n"
+  print_string "./interp [option] fichier \nOptions :\n   -debug : pour afficher le programme en entrée\n   -machine : Compile le programme et l'exécute\n   -interm : affiche le programme compilé sans l'exécuter.\n"
+
+
 (* Fonction pour l'option debug qui affiche simplement le programme*)
 let opt_debug () =
   try
@@ -202,7 +218,8 @@ let opt_debug () =
   with
   | e -> print_string (Printexc.to_string e)
                
-(* Fonction pour lancer l'interprÃ©teur quand il n'y a pas d'options *)
+
+(* Fonction pour lancer l'interpréteur quand il n'y a pas d'options *)
 let no_opt () =
   try
     let c = open_in Sys.argv.(1) in

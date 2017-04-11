@@ -1,1 +1,1 @@
-let rec f x = if x=0 then 1 else (x*(f (x-1))) in f 5
+let x = ref (3) in (x:=3); x
