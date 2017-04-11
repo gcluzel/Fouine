@@ -8,10 +8,10 @@ open Expr   (* rappel: dans expr.ml:
 /* description des lexèmes, ceux-ci sont décrits (par vous) dans lexer.mll */
 
 %token <int> Int       /* le lexème INT a un attribut entier */
-                          %token <string> Var
+%token <string> Var
 %token Let In Fun PrInt Right_arrow False True Let_rec
 %token If Then Else
-%token Plus Times Minus
+%token Plus Minus Times
 %token C_eq C_ge C_neq C_g C_l C_le
 %token L_par R_par
 %token Ref Ref_aff Bang Pt_virg
@@ -19,16 +19,15 @@ open Expr   (* rappel: dans expr.ml:
 
 
 
-%nonassoc PrInt Let Let_rec Fun
-%right Right_arrow
-%right In
+%nonassoc PrInt
+%nonassoc Fun Let Let_rec
+%nonassoc In Right_arrow
 %left Plus Minus          /* associativité gauche: a+b+c, c'est (a+b)+c */
 %left Times               /* associativité gauche: a*b*c, c'est (a*b)*c */
 
-                                       
-                                                            
-%nonassoc If Then Else
-%nonassoc Int        
+%left Pt_virg                                                           
+%nonassoc Ref Ref_aff Bang                
+%nonassoc If Then Else      
 %nonassoc R_par L_par C_g C_ge C_l C_le C_neq False True
 %nonassoc Var
 %nonassoc Uminus
