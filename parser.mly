@@ -15,6 +15,7 @@ open Expr   (* rappel: dans expr.ml:
 %token C_eq C_ge C_neq C_g C_l C_le
 %token L_par R_par
 %token Ref Ref_aff Bang Pt_virg
+%token Raise Excep Try With
 %token EOF            /* fin du fichier */
 
 
@@ -66,7 +67,12 @@ prog:
   | Let Var C_eq Ref prog In prog               { LetRef($2, $5, $7) }
   | Var Ref_aff prog Pt_virg prog               { RefAff($1, $3, $5) }
   | apply1                                      { $1 }
+  | Raise L_par Excep prog R_par				{ Raise( Excep $4 ) }
+  | Try prog With excep Right_arrow prog        { TryWith($2, $4, $8) }
 ;
+
+excep:
+  | Excep prog 					{ Excep $1 }
 
  /* pour l'application de fonctoins */
 apply1:

@@ -25,20 +25,24 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "else"			{ Else }
   | "begin"			{ L_par }
   | "end"			{ R_par }
-  | "PrInt"                     { PrInt }
-  | "let rec" 	          	{ Let_rec }
-  | '='                         { C_eq }
+  | "PrInt"			{ PrInt }
+  | "let rec"		{ Let_rec }
+  | '='				{ C_eq }
   | '>' 			{ C_g }
   | ">="			{ C_ge }
   | '<'				{ C_l }
   | "<="			{ C_le }
   | "<>" 			{ C_neq }
-  | "true"                      { True }
-  | "false"                     { False }
-  | ":="                        { Ref_aff }
-  | '!'                         { Bang }
-  | ';'							{ Pt_virg }
-  | "ref"                       { Ref }
+  | "true"			{ True }
+  | "false"			{ False }
+  | ":="			{ Ref_aff }
+  | '!'				{ Bang }
+  | ';'				{ Pt_virg }
+  | "ref"			{ Ref }
+  | "raise"			{ Raise }
+  | "try"			{ Try }
+  | "with"			{ With }
+  | 'E'				{ Excep }
   | ['0'-'9']+ as s { Int (int_of_string s) }
   | (['a'-'z']|['A'-'Z']|'_')(['a'-'z']|['A'-'Z']|'_'|['0'-'9'])* as s  { Var s }
   | eof             { EOF } 
