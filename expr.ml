@@ -29,7 +29,9 @@ and prog =
   | LetRef of var*prog*prog (* Pour les références *)
   | Bang of var    (* Pour déréférencer *)
   | RefAff of var*prog*prog (* On affecte un programme à une variable puis un programme suit *)
-           
+  | TryWith of prog*prog (* Try prog with prog *)
+  | Raise of prog (* On va récupérer l'erreur *)
+  | Excep of prog (* Il faut calculer le numéro d'erreur *)
 		      
 (* un type pour ce que contient l'envrionnement, et un type pour l'envrironnement lui-même *)
 type valeur =
@@ -39,7 +41,8 @@ type valeur =
   | VRef of (int ref)
 	      
 type env = (var*valeur) list ref
-				  
+
+exception E of int
 				   			  
 (* fonction d'affichage d'un programme fouine *)
 let rec affiche_prog_aux p =
