@@ -155,8 +155,25 @@ and aff_aux s a b =
                          print_string ";\n";
                          affiche_prog_aux p2;
                          end
-                         
-                 
+  | TryWith (p1,e,p2) -> begin
+			 print_string "try ";
+			 affiche_prog_aux p1;
+			 print_string "\nwith ";
+			 affiche_prog_aux e;
+			 print_string " -> ";
+			 affiche_prog_aux p2;
+		       end
+  | Raise (p) -> begin
+		 print_string "raise (";
+		 affiche_prog_aux p;
+		 print_string ")";
+	       end
+  | Excep (p) -> begin
+		 print_string "E (";
+		 affiche_prog_aux p;
+		 print_string ")";
+		 end
+			   
                         
 let affiche_prog p =
   begin
