@@ -71,10 +71,11 @@ prog:
   | Try prog With excep Right_arrow prog        { TryWith($2, $4, $6) }
 ;
 
+ /* gestion des exceptions */
 excep:
   | Excep prog 					{ Excep $2 }
 
- /* pour l'application de fonctoins */
+ /* pour l'application de fonctions */
 apply1:
   | L_par Fun Var Right_arrow fonction R_par apply2
                             { ApplyFun(Function($3, $5), $7) }
