@@ -196,10 +196,25 @@ let rec interp:prog->env->valeur=fun p l ->
                            interp p2 l
                         end
   | TryWith (p1,e,p2) ->begin
-			 match interp e l with
-			   VErr r -> begin
-				    try interp p1 l
-				    with r -> interp p2 l
+			 match e with
+			   Excep (p) -> begin
+				       match (p, interp p l) with
+					 (Variable x, _) -> begin
+							   try interp p1 l
+							   with (E y) -> begin
+									l:= (x, VInt y)::(!l);
+									let res = interp p2 l in
+									begin
+									pop x l;
+									res
+									end
+								      end
+							 end
+				       | (_, VInt n)  -> begin
+							 try interp p1 l
+							 with (E n) -> interp p2 l
+						       end
+				       | (_,_) -> failwith("Wrong type of exception in try with.")
 				  end
 			 | _ -> failwith("Catching something that isn't an error")
 		       end
