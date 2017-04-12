@@ -195,6 +195,14 @@ let rec interp:prog->env->valeur=fun p l ->
                              end;
                            interp p2 l
                         end
+  | TryWith (p1,e,p2) ->begin
+			 match interp e l with
+			   VErr r -> begin
+				    try interp p1 l
+				    with r -> interp p2 l
+				  end
+			 | _ -> failwith("Catching something that isn't an error")
+		       end
   | Raise (p) -> begin
 		 match interp p l with
 		   VErr e -> raise e
@@ -205,4 +213,3 @@ let rec interp:prog->env->valeur=fun p l ->
 		   VInt n -> VErr (E n)
 		 | _ -> failwith("Giving an argument that isn't an int to the exception.")
 	       end
-  | _ -> failwith("Not yet implemented.")
