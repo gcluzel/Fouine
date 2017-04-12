@@ -46,7 +46,9 @@ let no_opt () =
       | VFun (x,body) -> affiche_prog (Function (x,body));
       | VFunR (x,body) -> affiche_prog (Function (x,body));
       | VRef _ -> print_string "A reference cannot be printed";
-	print_newline(); flush stdout
+		  print_newline(); flush stdout
+      | VErr _ -> failwith("How did you manage to get an exception to be returned and not raised ?")
+
   with | e -> (print_string (Printexc.to_string e))
                       
   (* seule l'option -debug est implémentée à ce stade *)                    
