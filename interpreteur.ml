@@ -110,18 +110,15 @@ let rec interp:prog->env->valeur=fun p l ->
 			(* On a tous les arguments : alors on peut appliquer la fonction *)
 			Variable s -> begin
 				     match lookup s l with
-				       VInt _ -> failwith("Trying to use a variable as a function.")
-				     | VFun (x,body) -> let fenv = (x, interp p l)::(!l) and lanc = !l in
+				       VFun (x,body) -> let fenv = (x, interp p l)::(!l) and lanc = !l in
 							begin
 							  l:= fenv;
 							  pop s l;
 							  match interp body l with
 							    VFun (y,bodyp) -> VFun (y,bodyp)
 							  | VFunR (y, bodyp) -> VFunR (y, bodyp)
-							  | VInt n -> l:= lanc;
-								      VInt n
-							  | VRef r -> l:= lanc;
-								      VRef r
+							  | n -> l:= lanc;
+								 n
 							end
 				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
 				     | VFunR (x, body) -> let fenv = (x, interp p l)::(!l) and lanc = !l in
@@ -130,12 +127,10 @@ let rec interp:prog->env->valeur=fun p l ->
 							  match interp body l with
 							    VFun (y,bodyp) -> VFun (y,bodyp)
 							  | VFunR (y,bodyp) -> VFunR (y,bodyp)
-							  | VInt n -> l:= lanc;
-								      VInt n
-							  | VRef r -> l:= lanc;
-								      VRef r
+							  | n -> l:= lanc;
+								 n
 							end
-     				     | VRef _ -> failwith("Trying to use a reference as a fonction.")
+     				     | _ -> failwith("Trying to use something that isn't a function as a fonction.")
 				   end
 					
 		      (* Cas où il manque encore des arguments : on cherche alors les autres*)
@@ -147,10 +142,8 @@ let rec interp:prog->env->valeur=fun p l ->
 							      match interp body l with
 								VFun (z, bodyp) -> VFun (z, bodyp)
 							      | VFunR (z,bodyp) -> VFunR (z, bodyp)
-							      | VInt n -> l:=lanc;
-									  VInt n
-							      |VRef r -> l:=lanc;
-									 VRef r
+							      | n -> l:=lanc;
+								     n
 							    end
 					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
 				       end
