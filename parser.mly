@@ -68,7 +68,7 @@ prog:
   | Var Ref_aff prog Pt_virg prog               { RefAff($1, $3, $5) }
   | apply1                                      { $1 }
   | Raise L_par Excep prog R_par				{ Raise( Excep $4 ) }
-  | Try prog With excep Right_arrow prog        { TryWith($2, $4, $8) }
+  | Try prog With excep Right_arrow prog        { TryWith($2, $4, $6) }
 ;
 
 excep:
