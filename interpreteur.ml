@@ -161,10 +161,8 @@ let rec interp:prog->env->valeur=fun p l ->
 							  match interp body l with
 							    VFun (y,bodyp) -> VFun (y,bodyp)
 							  | VFunR (y, bodyp) -> VFunR (y, bodyp)
-							  | VInt n -> l:= lanc;
-								      VInt n
-							  | VRef r -> l:= lanc;
-								      VRef r
+							  | n -> l:= lanc;
+								 n
 							end
 				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
 		      | _ -> failwith("Not the right number of arguments or not applying a function")
@@ -213,4 +211,5 @@ let rec interp:prog->env->valeur=fun p l ->
 		 match interp p l with
 		   VInt n -> VErr (E n)
 		 | _ -> failwith("Giving an argument that isn't an int to the exception.")
+	       end
   | _ -> failwith("Not yet implemented.")
