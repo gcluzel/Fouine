@@ -72,7 +72,7 @@ prog:
 ;
 
 excep:
-  | Excep prog 					{ Excep $1 }
+  | Excep prog 					{ Excep $2 }
 
  /* pour l'application de fonctoins */
 apply1:
