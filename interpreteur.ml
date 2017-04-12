@@ -203,4 +203,14 @@ let rec interp:prog->env->valeur=fun p l ->
                              | _ -> failwith("Affectation error : the right member is not an interger")
                              end;
                            interp p2 l
-                           end
+                        end
+  | Raise (p) -> begin
+		 match interp p l with
+		   VErr e -> raise e
+		 | _ -> failwith("Not raising an error")
+	       end
+  | Excep (p) -> begin
+		 match interp p l with
+		   VInt n -> VErr (E n)
+		 | _ -> failwith("Giving an argument that isn't an int to the exception.")
+  | _ -> failwith("Not yet implemented.")
