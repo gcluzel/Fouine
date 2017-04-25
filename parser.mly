@@ -71,7 +71,7 @@ prog:
   | Try prog With excep Right_arrow prog        { TryWith($2, $4, $6) }
 ;
 
- /* gestion des exceptions */
+ /* Gestion des exceptions */
 excep:
   | Excep prog 					{ Excep $2 }
 
