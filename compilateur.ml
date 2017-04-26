@@ -43,7 +43,7 @@ let rec exec pile =
 		          end
 		| P::q -> begin
 		            match p2 with
-		            | n1::_ -> (print_newline (); print_int n1; aux q p2)
+		            | n1::_ -> (print_int n1; print_newline (); aux q p2)
 		            | _ -> failwith("Erreur")
 		          end
 	in
