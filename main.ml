@@ -61,8 +61,8 @@ let no_opt () =
     match interp result deb with
         VInt n -> print_int n;
 		    print_newline(); flush stdout; close_in c
-      | VFun (x,body) -> affiche_prog (Function (x,body)); close_in c
-      | VFunR (x,body) -> affiche_prog (Function (x,body)); close_in c
+      | VFun (x,body,l) -> affiche_prog (Function (x,body)); close_in c
+      | VFunR (x,body,l) -> affiche_prog (Function (x,body)); close_in c
       | VRef _ -> print_string "A reference cannot be printed";
 		  print_newline(); flush stdout; close_in c
       | VErr _ -> close_in c; failwith("How did you manage to get an exception to be returned and not raised ?")

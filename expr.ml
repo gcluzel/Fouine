@@ -36,12 +36,12 @@ and prog =
 (* un type pour ce que contient l'envrionnement, et un type pour l'envrironnement lui-même *)
 type valeur =
     VInt of int
-  | VFun of var*prog
-  | VFunR of var*prog (* type pour les fonctions récursives *)
+  | VFun of var*prog*env (* Un nom d'argument, du code et la cloture *)
+  | VFunR of var*prog*env (* type pour les fonctions récursives *)
   | VRef of (int ref)
   | VErr of exn
 	      
-type env = (var*valeur) list ref
+and env = (var*valeur) list ref
 
 exception E of int
 				   			  
