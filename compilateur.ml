@@ -2,6 +2,7 @@ open Expr
 
 type instr =
     C of int
+  | P
   | A
   | M
   | S
@@ -9,11 +10,12 @@ type instr =
 let rec compile:prog->instr list = fun p ->
   match p with
     Const n -> [C n]
+  | PrInt p -> (compile p)@[P]
   | Add (p1, p2) -> (compile p2)@(compile p1)@[A]
   | Mul(p1,p2) -> (compile p2)@(compile p1)@[M]
   | Min(p1,p2) -> (compile p2)@(compile p1)@[S]
   | _ -> failwith("Not yet implemented.")
-
+		  
 
 let rec exec pile = 
 	let rec aux p1 p2 =
