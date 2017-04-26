@@ -27,22 +27,32 @@ let rec exec pile =
 			      | [x] -> x
 			      | _ -> failwith("impossible")
 			    end
+			    
+	    (* Pour un nombre, on l'ajoute sur la deuxième pile *)
 		| (C n)::q -> aux q (n::p2)
+		
+		(* Multiplication : On dépile deux variables pour les multiplier avant de rempiler le résultat *)
 		| M::q -> begin
 		            match p2 with
 		            | n1::n2::q2 -> aux q ((n1 * n2)::q2)
 		            | _ -> failwith("Erreur sur la machine à pile")
 		          end
+		          
+		(* Addition *)
 		| A::q -> begin
 			        match p2 with
 			        | n1::n2::q2 -> aux q ((n1 + n2)::q2)
 		            | _ -> failwith("Erreur sur la machine à pile")
 		          end
+		          
+		(* Soustraction *)
 		| S::q -> begin
 			        match p2 with
 			        | n1::n2::q2 -> aux q ((n1 - n2)::q2)
 		            | _ -> failwith("Erreur sur la machine à pile")
 		          end
+		          
+		(* On affiche le résultat sur le haut de la pile que l'on laisse pour poursuivre les calculs *)
 		| P::q -> begin
 		            match p2 with
 		            | n1::_ -> (print_int n1; print_newline (); aux q p2)

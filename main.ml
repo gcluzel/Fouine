@@ -24,6 +24,7 @@ let parse c = Parser.main Lexer.token (lexbuf c)
 let print_help () =
   print_string "./interp [option] fichier \nOptions :\n   -debug : pour afficher le programme en entrée\n   -machine : Compile le programme et l'exécute\n   -interm : affiche le programme compilé sans l'exécuter.\n\n"
 
+(* Affichage du code généré pour la machine à pile *)
 let rec write_code code fd =
   begin
     match code with
@@ -69,6 +70,7 @@ let no_opt () =
 
   with | e -> (print_string (Printexc.to_string e))
 
+(* Execute le programme sur la machine à pile *)
 let opt_machine () =
   try
     let c = open_in Sys.argv.(2) in
@@ -82,6 +84,7 @@ let opt_machine () =
     end
   with | e -> (print_string (Printexc.to_string e))
 
+(* Option qui affiche le code de la machine à pile *)
 let opt_interm () =
   try
     let c = open_in Sys.argv.(3) and cp = open_out Sys.argv.(2) in
@@ -94,7 +97,7 @@ let opt_interm () =
     end				      
   with | e -> (print_string (Printexc.to_string e))
     
-  (* seule l'option -debug est implémentée à ce stade *)                    
+(* Point d'entrée du programme *)                  
 let main () =
   try
     match Sys.argv.(1) with
