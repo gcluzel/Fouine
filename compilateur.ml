@@ -39,5 +39,10 @@ let rec exec pile =
 			        | n1::n2::q2 -> aux q ((n1 - n2)::q2)
 		            | _ -> failwith("Erreur")
 		          end
+		| P::q -> begin
+		            match p2 with
+		            | n1::_ -> (print_int n1; aux q p2)
+		            | _ -> failwith("Erreur")
+		          end
 	in
 	aux pile [];;
