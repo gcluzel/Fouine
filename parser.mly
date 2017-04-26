@@ -1,6 +1,6 @@
 %{
 
-open Exp
+open Expr
 
 %}
 /* description des lexèmes, ceux-ci sont décrits (par vous) dans lexer.mll */
