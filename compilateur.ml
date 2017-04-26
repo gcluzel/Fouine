@@ -36,7 +36,7 @@ let rec exec pile =
 		          end
 		| S::q -> begin
 			        match p2 with
-			        | n1::n2::q2 -> aux q ((n2 - n1)::q2)
+			        | n1::n2::q2 -> aux q ((n1 - n2)::q2)
 		            | _ -> failwith("Erreur")
 		          end
 	in
