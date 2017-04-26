@@ -102,7 +102,7 @@ let rec interp:prog->env->valeur=fun p l ->
   | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
 
   (* Là c'est une fonction anonyme : donc un argument et le corps de la fonction *)
-  | Function (x,pfun) -> VFun (x,pfun,l)
+  | Function (x,pfun) -> VFun (x,pfun,ref !l)
 
   (* Ici on souhaite appliquer une fonction *)
   | ApplyFun (f,p) -> begin
@@ -110,24 +110,23 @@ let rec interp:prog->env->valeur=fun p l ->
 			(* On a tous les arguments : alors on peut appliquer la fonction *)
 			Variable s -> begin
 				     match lookup s l with
-				       VFun (x,body,clo) -> let fenv = (x, interp p l)::(!clo) and lanc = !l in
+				       VFun (x,body,clo) -> let fenv = (x, interp p l)::(!clo) and cloanc = !clo in
 							begin
-							  l:= fenv;
-							  pop s l;
-							  match interp body l with
+							  clo:= fenv;
+							  match interp body clo with
 							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
 							  | VFunR (y, bodyp,clop) -> VFunR (y, bodyp,clop)
-							  | n -> l:= lanc;
+							  | n -> clo:= cloanc;
 								 n
 							end
-				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
-				     | VFunR (x, body, clo) -> let fenv = (x, interp p l)::(!clo) and lanc = !l in
+				     (* On utilise la cloture associée à la fonction *)
+				     | VFunR (x, body, clo) -> let fenv = (s, VFunR (x, body, clo))::(x, interp p l)::(!clo) and cloanc = !clo in
 							begin
-							  l:= fenv;
-							  match interp body l with
+							  clo:= fenv;
+							  match interp body clo with
 							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
 							  | VFunR (y,bodyp,clop) -> VFunR (y,bodyp,clop)
-							  | n -> l:= lanc;
+							  | n -> clo:= cloanc;
 								 n
 							end
      				     | _ -> failwith("Trying to use something that isn't a function as a fonction.")
@@ -148,7 +147,7 @@ let rec interp:prog->env->valeur=fun p l ->
 					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
 				       end
 		      (* Cas où on définit une fonction anonyme puis qu'on l'applique juste après *)
-		      | Function(x,body) -> let fenv = [(x, interp p l)] and lanc = !l in
+		      | Function(x,body) -> let fenv = (x, interp p l)::(!l) and lanc = !l in
 							begin
 							  l:= fenv;
 							  match interp body l with
