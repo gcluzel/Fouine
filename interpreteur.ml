@@ -214,7 +214,7 @@ let rec interp:prog->env->valeur=fun p l ->
 						 VInt n -> begin
 							  try interp p1 l
 							  with (E k) -> if n=k then interp p2 l
-									else raise (E n)
+									else raise (E k)
 							end
 					       | _ -> failwith("Wrong type of exception in try with.")
 					     end
