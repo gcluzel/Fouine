@@ -18,9 +18,28 @@ let rec compile:prog->instr list = fun p ->
 		  
 
 let rec exec pile = 
-	match pile with
-	| [C n] -> n
-	| (C n1)::(C n2)::A::q -> exec ((C (n1 + n2))::q)
-	| (C n1)::(C n2)::M::q -> exec ((C (n1 * n2))::q)
-	| (C n1)::(C n2)::S::q -> exec ((C (n1 - n2))::q)
-	| _ -> failwith("Not a possible case")
+	let rec aux p1 p2 =
+		match p1 with
+		| [] -> begin 
+		          match p2 with
+			      | [x] -> x
+			      | _ -> failwith("impossible")
+			    end
+		| (C n)::q -> aux q (n::p2)
+		| M::q -> begin
+		            match p2 with
+		            | n1::n2::q2 -> aux q ((n1 * n2)::q2)
+		            | _ -> failwith("Erreur")
+		          end
+		| A::q -> begin
+			        match p2 with
+			        | n1::n2::q2 -> aux q ((n1 + n2)::q2)
+		            | _ -> failwith("Erreur")
+		          end
+		| S::q -> begin
+			        match p2 with
+			        | n1::n2::q2 -> aux q ((n1 - n2)::q2)
+		            | _ -> failwith("Erreur")
+		          end
+	in
+	aux pile [];;
