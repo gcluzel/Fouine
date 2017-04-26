@@ -196,8 +196,10 @@ let rec interp:prog->env->valeur=fun p l ->
                         end
   | TryWith (p1,e,p2) ->begin
 			 match e with
+			   (* On vérifie que e est bien un code d'erreur *)
 			   Excep (p) -> begin
 				       match p with
+					 (* Son argument doit soit être une variable... *)
 					 Variable x -> begin
 							   try interp p1 l
 							   with (E y) -> begin
@@ -211,8 +213,10 @@ let rec interp:prog->env->valeur=fun p l ->
 							 end
 				       | _  -> begin
 					       match interp p l with
+						 (* ...Soit un programme qui renvoie un int *)
 						 VInt n -> begin
 							  try interp p1 l
+							(* On catch l'erreur et on vérifie que c'est la bonne, sinon on fait remonter l'erreur *)
 							  with (E k) -> if n=k then interp p2 l
 									else raise (E k)
 							end
@@ -221,11 +225,13 @@ let rec interp:prog->env->valeur=fun p l ->
 				  end
 			 | _ -> failwith("Catching something that isn't an error")
 		       end
+			  
   | Raise (p) -> begin
 		 match interp p l with
 		   VErr e -> raise e
 		 | _ -> failwith("Not raising an error")
 	       end
+		   
   | Excep (p) -> begin
 		 match interp p l with
 		   VInt n -> VErr (E n)
