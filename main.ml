@@ -36,6 +36,8 @@ let rec write_code code fd =
 		write_code q fd;
     | (S)::q -> Printf.fprintf fd "%s\n" "S";
 		write_code q fd;
+    | (P)::q -> Printf.fprintf fd "%s\n" "P";
+		write_code q fd;
   end
 	       
 
