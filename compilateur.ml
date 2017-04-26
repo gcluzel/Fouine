@@ -1,12 +1,13 @@
 open Expr
 
 type instr =
-    C of int
-  | P
-  | A
-  | M
-  | S
-       
+    C of int  (* Entier *)
+  | P         (* Instruction d'affichage *)
+  | A         (* Addition *)
+  | M         (* Multiplication *)
+  | S         (* Soustraction *)
+
+(* Compilation d'un programme vers une pile pour la machine à pile *)     
 let rec compile:prog->instr list = fun p ->
   match p with
     Const n -> [C n]
@@ -17,6 +18,7 @@ let rec compile:prog->instr list = fun p ->
   | _ -> failwith("Not yet implemented.")
 		  
 
+(* Execution de la machine à pile*)
 let rec exec pile = 
 	let rec aux p1 p2 =
 		match p1 with
@@ -29,22 +31,22 @@ let rec exec pile =
 		| M::q -> begin
 		            match p2 with
 		            | n1::n2::q2 -> aux q ((n1 * n2)::q2)
-		            | _ -> failwith("Erreur")
+		            | _ -> failwith("Erreur sur la machine à pile")
 		          end
 		| A::q -> begin
 			        match p2 with
 			        | n1::n2::q2 -> aux q ((n1 + n2)::q2)
-		            | _ -> failwith("Erreur")
+		            | _ -> failwith("Erreur sur la machine à pile")
 		          end
 		| S::q -> begin
 			        match p2 with
 			        | n1::n2::q2 -> aux q ((n1 - n2)::q2)
-		            | _ -> failwith("Erreur")
+		            | _ -> failwith("Erreur sur la machine à pile")
 		          end
 		| P::q -> begin
 		            match p2 with
 		            | n1::_ -> (print_int n1; print_newline (); aux q p2)
-		            | _ -> failwith("Erreur")
+		            | _ -> failwith("Erreur sur la machine à pile")
 		          end
 	in
 	aux pile [];;
