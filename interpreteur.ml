@@ -89,7 +89,7 @@ let rec interp:prog->env->valeur=fun p l ->
   | RecFunction (f,p1,p2) -> let val_fun = interp p1 l in
 			     begin
 			       match val_fun with
-				 VFun (x, body) -> l:=((f,VFunR (x,body))::(!l));
+				 VFun (x, body, clo) -> l:=((f,VFunR (x,body, clo))::(!l));
 						   let res = interp p2 l in
 						   begin
 						     pop f l;
@@ -102,7 +102,7 @@ let rec interp:prog->env->valeur=fun p l ->
   | IfThenElse (b,pif,pelse) -> if (interpbool b l) then interp pif l else interp pelse l
 
   (* Là c'est une fonction anonyme : donc un argument et le corps de la fonction *)
-  | Function (x,pfun) -> VFun (x,pfun)
+  | Function (x,pfun) -> VFun (x,pfun,l)
 
   (* Ici on souhaite appliquer une fonction *)
   | ApplyFun (f,p) -> begin
@@ -110,23 +110,23 @@ let rec interp:prog->env->valeur=fun p l ->
 			(* On a tous les arguments : alors on peut appliquer la fonction *)
 			Variable s -> begin
 				     match lookup s l with
-				       VFun (x,body) -> let fenv = (x, interp p l)::(!l) and lanc = !l in
+				       VFun (x,body,clo) -> let fenv = (x, interp p l)::(!clo) and lanc = !l in
 							begin
 							  l:= fenv;
 							  pop s l;
 							  match interp body l with
-							    VFun (y,bodyp) -> VFun (y,bodyp)
-							  | VFunR (y, bodyp) -> VFunR (y, bodyp)
+							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
+							  | VFunR (y, bodyp,clop) -> VFunR (y, bodyp,clop)
 							  | n -> l:= lanc;
 								 n
 							end
 				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
-				     | VFunR (x, body) -> let fenv = (x, interp p l)::(!l) and lanc = !l in
+				     | VFunR (x, body, clo) -> let fenv = (x, interp p l)::(!clo) and lanc = !l in
 							begin
 							  l:= fenv;
 							  match interp body l with
-							    VFun (y,bodyp) -> VFun (y,bodyp)
-							  | VFunR (y,bodyp) -> VFunR (y,bodyp)
+							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
+							  | VFunR (y,bodyp,clop) -> VFunR (y,bodyp,clop)
 							  | n -> l:= lanc;
 								 n
 							end
@@ -137,23 +137,23 @@ let rec interp:prog->env->valeur=fun p l ->
 		      | ApplyFun(_,_) -> begin
 					 let lanc = !l in
 					   match interp f l with
-					     VFun (y, body) -> begin
-							      l:=((y, interp p (ref lanc))::(!l));
+					     VFun (y, body, clo) -> begin
+							      l:=((y, interp p (ref lanc))::(!clo));
 							      match interp body l with
-								VFun (z, bodyp) -> VFun (z, bodyp)
-							      | VFunR (z,bodyp) -> VFunR (z, bodyp)
+								VFun (z,bodyp,clop) -> VFun (z,bodyp,clop)
+							      | VFunR (z,bodyp,clop) -> VFunR (z,bodyp,clop)
 							      | n -> l:=lanc;
 								     n
 							    end
 					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
 				       end
-		      (* Cas où on définit une fonction anonyme puis qu'on l'applique jsute après *)
+		      (* Cas où on définit une fonction anonyme puis qu'on l'applique juste après *)
 		      | Function(x,body) -> let fenv = [(x, interp p l)] and lanc = !l in
 							begin
 							  l:= fenv;
 							  match interp body l with
-							    VFun (y,bodyp) -> VFun (y,bodyp)
-							  | VFunR (y, bodyp) -> VFunR (y, bodyp)
+							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
+							  | VFunR (y,boyp,clop) -> VFunR (y,body,clop)
 							  | n -> l:= lanc;
 								 n
 							end
