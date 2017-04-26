@@ -1,8 +1,6 @@
 %{
-(* --- préambule: ici du code Caml --- *)
 
-open Expr   (* rappel: dans expr.ml: 
-             type expr = Const of int | Add of expr*expr | Mull of expr*expr *)
+open Exp
 
 %}
 /* description des lexèmes, ceux-ci sont décrits (par vous) dans lexer.mll */
