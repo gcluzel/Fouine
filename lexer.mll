@@ -25,7 +25,7 @@ rule token = parse    (* la "fonction" aussi s'appelle token .. *)
   | "else"			{ Else }
   | "begin"			{ L_par }
   | "end"			{ R_par }
-  | "PrInt"			{ PrInt }
+  | "prInt"			{ PrInt }
   | "let rec"		{ Let_rec }
   | '='				{ C_eq }
   | '>' 			{ C_g }
