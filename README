@@ -1,5 +1,6 @@
 
-Nous avons tout implémenté de base, ainsi que les références pour enrichir le langage.
+Les remarques faites pour le rendu 2 ont été corrigées dans ce rendu.
+
 Dans les références nous avons modifié quelques peu les choses pour mieux coller
 avec OCaml
  - a := 4 ne renvoie pas 4, mais ne renvoie rien, il faut dans ce cas faire a := 4 ; !a
@@ -8,20 +9,43 @@ avec OCaml
             let a = ref ... in
             	a := !a + 1;
             	!a
+Les exceptions sont aussi implémentées.
+
+
+=============================================
+           Répartition des fichiers
+=============================================
+
+ - main.ml : C'est le point d'entrée du programme. Il sert à traiter les différents cas selon les arguments passés au programme.
+ - lexer.mll / parser.mly : tout ce qui est lexer et parser.
+ - expr.ml : définition du type prog et une fonction d'affichage de programme.
+ - interpreteur.ml : fichier qui contient l'interpréteur des programmes fouine.
+ - compilateur.ml : contient tout ce qui est en rapport avec la machine à pile. (Pour l'instant la partie compilation et interprétation sont dans le même fichier, elles seront sûrement séparé s'il y a plus de code au prochain rendu.)
+ - dossier test : contient de nombreux tests détaillés à la fin du README.
 
 =============================================
                Interpréteur
 =============================================
 Partie de Julien Devevey
 
-L'interpréteur fonctionne parfaitement bien.
+L'interpréterur fonctionne maintenant, nous avons corrigé les problèmes de clôture.
 
 =============================================
                Parser / Lexer
 =============================================
 Partie de Guillaume Cluzel
 
-Le parser fonctionne très bien. Le lexer aussi. Il n'y a pas de bogue là dessus.
+Le parser fonctionne très bien. Le lexer aussi.
+
+
+=============================================
+               Machine à pile
+=============================================
+Compilation : Julien Devevey / Interprétation : Guillaume Cluzel
+
+La machine à pile compile et interpréte, mais que les expressions arithmétiques avec le prInt.
+
+ L'option -machine [fichier.ml] prend un fichier fouine (uniquement des expressions arithmétiques) le compile et exécute la machine à pile.
 
 
 =============================================
@@ -35,3 +59,6 @@ De nombreux exemples sont dans le dossier "test" pour tester le programme.
  - anonymous_fun.ml : évaluation d'un fonction anonyme
  - reference.ml : utilisation de références
  - somme.ml : somme deux élements à l'aide de références, des fonctions récursives ainsi que des if then else.
+  - calcul.ml : une expression arithmétique avec un prInt pour tester la machine à pile.
+  - trywith.ml / excep.ml : test pour les exceptions.
+  - retour_rendu.ml : code qui marchait pas dans le rendu 2 et qui fonctionne maintenant.
