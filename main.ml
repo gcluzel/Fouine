@@ -22,7 +22,7 @@ let parse c = Parser.main Lexer.token (lexbuf c)
 
 (* aide pour l'utilisation du programme *)
 let print_help () =
-  print_string "./interp [option] fichier \nOptions :\n   -debug : pour afficher le programme en entrée\n   -machine : Compile le programme et l'exécute\n   -interm : affiche le programme compilé sans l'exécuter.\n\n"
+  print_string "./fouine [option] fichier \nOptions :\n   -debug : pour afficher le programme en entrée\n   -machine : Compile le programme et l'exécute\n   -interm : affiche le programme compilé sans l'exécuter.\n\t\t\t./fouine -interm toto.code fichier.ml\n"
 
 (* Affichage du code généré pour la machine à pile *)
 let rec write_code code fd =
