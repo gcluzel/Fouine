@@ -47,6 +47,7 @@ La machine à pile compile et interpréte, mais que les expressions arithmétiqu
 
  L'option -machine [fichier.ml] prend un fichier fouine (uniquement des expressions arithmétiques) le compile et exécute la machine à pile.
 
+ L'option  -interm [fichier.code] [fichier.ml] prend un fichier fouine en entrée ainsi que le fichier de destination .code dans lequel est stocké le code donné à la machine à pile.
 
 =============================================
                    Exemples
