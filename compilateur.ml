@@ -75,5 +75,7 @@ let rec exec code =
 					aux q q2 l
 			     | _ -> failwith("Erreur sur la machine à pile")
 			      end
+		| ENDLET::q -> pop_last l;
+			       aux q pile l
 	in
 	aux code [] (ref []);;

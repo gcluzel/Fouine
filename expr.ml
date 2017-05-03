@@ -212,3 +212,11 @@ let rec update (x : var) (l : env) (n : int) =
   | (s,v)::lp -> l := lp;
                  update x l n;
                  l := (s,v)::lp
+
+let rec pop_last = fun l ->
+  match !l with
+    [] -> failwith("Empty environment, can't pop the last element.")
+  | (x, v)::[] -> l:=[]
+  | (x, v)::lp -> l:=lp;
+		  pop_last l;
+		  l:=(x,v)::(!l)

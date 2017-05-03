@@ -39,6 +39,12 @@ let rec write_code code fd =
 		write_code q fd;
     | (P)::q -> Printf.fprintf fd "%s\n" "P";
 		write_code q fd;
+    | (LET x)::q -> Printf.fprintf fd "%s\n" ("LET "^x);
+		    write_code q fd;
+    | (ACCESS x)::q -> Printf.fprintf fd "%s\n" ("ACCESS "^x);
+		       write_code q fd;
+    | ENDLET::q -> Printf.fprintf fd "%s\n" "ENDLET";
+		   write_code q fd;
   end
 	       
 
