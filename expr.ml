@@ -17,15 +17,15 @@ and exprbool =
 and prog =
     Const of int
   | Variable of var
-  | Add of prog*prog
-  | Mul of prog*prog
-  | Min of prog*prog    (* Les expressions arithmétiques jusque là *)
-  | Letin of var*prog*prog (* une affection puis un programme *)
+  | Add of prog*prog*bool
+  | Mul of prog*prog*bool
+  | Min of prog*prog*bool    (* Les expressions arithmétiques jusque là *)
+  | Letin of var*prog*prog*bool (* une affection puis un programme *)
   | RecFunction of var*prog*prog (* nom de la fonction, nom de la variable, puis la fonction proprement dite *)
   | IfThenElse of exprbool*prog*prog (* la condition, puis le programme du if puis le programme du else *)
   | ApplyFun of prog*prog (* Quand on souhaite appliquer une fonction *)
   | Function of var*prog    (* La variable de la fonction et son programme (qui peut être une autre fun d'ailleurs si il y a plusieurs arguments) *)
-  | PrInt of prog    (* Pour l'affichage d'un entier *)
+  | PrInt of prog*bool    (* Pour l'affichage d'un entier *)
   | LetRef of var*prog*prog (* Pour les références *)
   | Bang of var    (* Pour déréférencer *)
   | RefAff of var*prog*prog (* On affecte un programme à une variable puis un programme suit *)
@@ -42,7 +42,7 @@ type valeur =
   | VErr of exn
 	      
 and env = (var*valeur) list ref
-
+		       
 exception E of int
 				   			  
 (* fonction d'affichage d'un programme fouine *)
@@ -75,22 +75,22 @@ and aff_aux s a b =
   match p with
     Variable s -> print_string s
   | Const k -> print_int k
-  | Add(e1,e2) -> aff_aux "+" e1 e2
-  | Mul(e1,e2) -> aff_aux "*" e1 e2
-  | Min(e1,e2) -> aff_aux "-" e1 e2
+  | Add(e1,e2,_) -> aff_aux "+" e1 e2
+  | Mul(e1,e2,_) -> aff_aux "*" e1 e2
+  | Min(e1,e2,_) -> aff_aux "-" e1 e2
   | Function(var, pp) -> begin
                       print_string "fun ";
                       print_string var;
                       print_string " -> ";
                       affiche_prog_aux pp
                        end
-  | Letin (a, Function(x, body), p) -> begin
+  | Letin (a, Function(x, body), p,_) -> begin
 				       print_string ("let "^a^"= fun "^x^"->\n");
 				       affiche_prog_aux body;
 				       print_string "\nin\n";
 				       affiche_prog_aux p
 				       end
-  | Letin (a,p1,p2) -> begin
+  | Letin (a,p1,p2,_) -> begin
 		    print_string "let ";
 		    print_string a;
 		    print_string " = ";
@@ -131,7 +131,7 @@ and aff_aux s a b =
 		      affiche_prog_aux x;
 		      print_string "))"
 		    end
-  | PrInt x -> begin
+  | PrInt (x,_) -> begin
                print_string "PrInt(";
                affiche_prog_aux x;
                print_string ")\n"

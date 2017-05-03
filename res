@@ -1,2 +1,8 @@
-C 5
-P
+C 2
+C 1
+A
+LET x
+C 1
+ACCESS x
+A
+ENDLET

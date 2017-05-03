@@ -29,24 +29,24 @@ let rec interp:prog->env->valeur=fun p l ->
 		  end
 
   (* Les fonctions arithmétiques, qui ne peuvent additioner que des entiers *)
-  | Add (e1,e2) ->begin
+  | Add (e1,e2,_) ->begin
 		   match ((interp e1 l),(interp e2 l)) with
 		     (VInt n1, VInt n2) -> VInt (n1+n2)
 		   | (_,_) -> failwith("Trying to add functions or references.")
 		 end
-  | Mul (e1,e2) -> begin
+  | Mul (e1,e2,_) -> begin
 		   match ((interp e1 l),(interp e2 l)) with
 		     (VInt n1, VInt n2) -> VInt (n1*n2)
 		   | (_,_) -> failwith("Trying to multiply functions.")
 		 end
-  | Min (e1,e2) ->begin
+  | Min (e1,e2,_) ->begin
 		   match ((interp e1 l),(interp e2 l)) with
 		     (VInt n1, VInt n2) -> VInt (n1-n2)
 		   | (_,_) -> failwith("Trying to substract functions.")
 		 end
 
   (* LetIn peut soir correspondre à la définition d'une fonction, soit à la définition d'un entier, ça dépend de si interp p1 l renvoie une VFun ou un VInt *)
-  | Letin (x,p1,p2) -> let new_val = interp p1 l in
+  | Letin (x,p1,p2,_) -> let new_val = interp p1 l in
 		       begin
 			 l:=((x,new_val)::(!l));
 			 let res = interp p2 l in
@@ -132,7 +132,7 @@ let rec interp:prog->env->valeur=fun p l ->
 		    end
 
   (* Si on fait un prInt, alors on print et on renvoie la valeur *)
-  | PrInt x -> begin
+  | PrInt (x,_) -> begin
                let n = interp x l in
                match n with
 		           VInt k -> print_int k; print_newline (); n

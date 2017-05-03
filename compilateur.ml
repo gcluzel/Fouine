@@ -15,11 +15,11 @@ let rec compile:prog->instr list = fun p ->
   match p with
     Const n -> [C n]
   | Variable x -> [ACCESS x]
-  | PrInt p -> (compile p)@[P]
-  | Add (p1, p2) -> (compile p2)@(compile p1)@[A]
-  | Mul(p1,p2) -> (compile p2)@(compile p1)@[M]
-  | Min(p1,p2) -> (compile p2)@(compile p1)@[S]
-  | Letin(x, p1, p2) -> (compile p1)@[LET x]@(compile p2)@[ENDLET]
+  | PrInt (p,_) -> (compile p)@[P]
+  | Add (p1, p2,_) -> (compile p2)@(compile p1)@[A]
+  | Mul(p1,p2,_) -> (compile p2)@(compile p1)@[M]
+  | Min(p1,p2,_) -> (compile p2)@(compile p1)@[S]
+  | Letin(x, p1, p2,_) -> (compile p1)@[LET x]@(compile p2)@[ENDLET]
   | _ -> failwith("Not yet implemented.")
 		  
 

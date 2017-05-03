@@ -52,14 +52,14 @@ main:
 
  /* Structure générale d'un programme */
 prog:
-  | prog Plus prog          	                { Add($1, $3) }
-  | prog Minus prog        	                { Min($1, $3) }
-  | Minus prog %prec Uminus	                { Min(Const 0, $2) }
-  | prog Times prog        	                { Mul($1, $3) }
+  | prog Plus prog          	                { Add($1, $3, false) }
+  | prog Minus prog        	                { Min($1, $3, false) }
+  | Minus prog %prec Uminus	                { Min(Const 0, $2, false) }
+  | prog Times prog        	                { Mul($1, $3, false) }
   | If exprb Then prog Else prog                { IfThenElse($2,$4,$6) }
-  | PrInt prog                                  { PrInt $2 } 
-  | Let Var C_eq fonction In prog               { Letin ($2, $4, $6) }
-  | Let Var fonction2 In prog                   { Letin ($2, $3, $5) }
+  | PrInt prog                                  { PrInt ($2,false) } 
+  | Let Var C_eq fonction In prog               { Letin ($2, $4, $6, false) }
+  | Let Var fonction2 In prog                   { Letin ($2, $3, $5, false) }
   | Let_rec Var C_eq fonction In prog           { RecFunction ($2, $4, $6) }
   | Let_rec Var fonction2 In prog               { RecFunction ($2, $3, $5) }
   | Let Var C_eq Ref prog In prog               { LetRef($2, $5, $7) }
