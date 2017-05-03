@@ -1,35 +1,6 @@
 open Expr
 
-(* Fonction lookup pour chercher la valeur d'une variable dans la pile *)
-let rec lookup:var->env->valeur= fun x l ->
-  match !l with
-    [] -> failwith(x^" is not defined in the current environment.")
-  | (s, v)::lp when x=s -> v
-  (*| (s, VFun (x,body))::lp when x=s -> VFun (x,body)*)
-  | (s,v)::lp -> l:=lp;
-		 let res = lookup x l in
-		 begin
-		   l:=((s,v)::lp);
-		   res
-		 end
-
-(* retire une valeur de la mémoire*)
-let rec pop:var->env->unit = fun x l ->
-  match !l with
-    [] -> failwith("Suppressing a variable that wasn't in the environment.")
-  | (s,v)::lp when x=s -> l:=lp
-  | (s,v)::lp -> l:=lp;
-		 pop x l;
-		 l:=(s,v)::lp
- 
-(* Met à jour la valeur d'une référence dans la mémoire *)
-let rec update (x : var) (l : env) (n : int) = 
-  match !l with
-  | [] -> failwith("The reference " ^ x ^ "is not in the current environment")
-  | (s,VRef v)::lp when s = x -> v:=n
-  | (s,v)::lp -> l := lp;
-                 update x l n;
-                 l := (s,v)::lp
+(* Les fonctions lookup, pop et update sont maintenant dans expr.ml car elles sont aussi utilisées ar la machine à pile *)
 
 (* La fonction la plus importante : l'interpréteur ! *)
 
