@@ -1,6 +1,6 @@
 ### Starting build.
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules main.ml > main.ml.depends # cached
+/usr/bin/ocamldep -modules main.ml > main.ml.depends
 # Target: compilateur.ml.depends, tags: { extension:ml, file:compilateur.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules compilateur.ml > compilateur.ml.depends # cached
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
@@ -13,6 +13,10 @@
 /usr/bin/ocamldep -modules interpreteur.ml > interpreteur.ml.depends # cached
 # Target: interpreteur.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:interpreteur.cmo, file:interpreteur.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o interpreteur.cmo interpreteur.ml # cached
+# Target: interpreteurmixte.ml.depends, tags: { extension:ml, file:interpreteurmixte.ml, ocaml, ocamldep, quiet }
+/usr/bin/ocamldep -modules interpreteurmixte.ml > interpreteurmixte.ml.depends # cached
+# Target: interpreteurmixte.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:interpreteurmixte.cmo, file:interpreteurmixte.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o interpreteurmixte.cmo interpreteurmixte.ml # cached
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
 /usr/bin/ocamllex -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
@@ -26,21 +30,23 @@
 # Target: lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o lexer.cmo lexer.ml # cached
 # Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc -c -o main.cmo main.ml # cached
+/usr/bin/ocamlc -c -o main.cmo main.ml
 # Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o expr.cmx expr.ml # cached
+/usr/bin/ocamlopt -c -o expr.cmx expr.ml
 # Target: compilateur.cmx, tags: { compile, extension:cmx, extension:ml, file:compilateur.cmx, file:compilateur.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o compilateur.cmx compilateur.ml # cached
-# Target: interpreteur.cmx, tags: { compile, extension:cmx, extension:ml, file:interpreteur.cmx, file:interpreteur.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o interpreteur.cmx interpreteur.ml # cached
+/usr/bin/ocamlopt -c -o compilateur.cmx compilateur.ml
 # Target: parser.ml.depends, tags: { extension:ml, file:parser.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules parser.ml > parser.ml.depends # cached
+/usr/bin/ocamldep -modules parser.ml > parser.ml.depends
 # Target: parser.cmx, tags: { compile, extension:cmx, extension:ml, file:parser.cmx, file:parser.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o parser.cmx parser.ml # cached
+/usr/bin/ocamlopt -c -o parser.cmx parser.ml
+# Target: interpreteur.cmx, tags: { compile, extension:cmx, extension:ml, file:interpreteur.cmx, file:interpreteur.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o interpreteur.cmx interpreteur.ml
+# Target: interpreteurmixte.cmx, tags: { compile, extension:cmx, extension:ml, file:interpreteurmixte.cmx, file:interpreteurmixte.ml, implem, native, ocaml, quiet }
+/usr/bin/ocamlopt -c -o interpreteurmixte.cmx interpreteurmixte.ml
 # Target: lexer.cmx, tags: { compile, extension:cmx, extension:ml, file:lexer.cmx, file:lexer.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o lexer.cmx lexer.ml # cached
+/usr/bin/ocamlopt -c -o lexer.cmx lexer.ml
 # Target: main.cmx, tags: { compile, extension:cmx, extension:ml, file:main.cmx, file:main.ml, implem, native, ocaml, quiet }
-/usr/bin/ocamlopt -c -o main.cmx main.ml # cached
+/usr/bin/ocamlopt -c -o main.cmx main.ml
 # Target: main.native, tags: { dont_link_with, extension:native, file:main.native, link, native, ocaml, program, quiet }
-/usr/bin/ocamlopt unix.cmxa expr.cmx compilateur.cmx interpreteur.cmx parser.cmx lexer.cmx main.cmx -o main.native # cached
+/usr/bin/ocamlopt unix.cmxa expr.cmx compilateur.cmx interpreteur.cmx interpreteurmixte.cmx parser.cmx lexer.cmx main.cmx -o main.native
 # Compilation successful.

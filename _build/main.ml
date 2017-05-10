@@ -1,7 +1,8 @@
 open Expr
 open Interpreteur
+open Interpreteurmixte
 open Compilateur
-
+       
 let compile e =
   begin
     affiche_prog e;
@@ -22,7 +23,7 @@ let parse c = Parser.main Lexer.token (lexbuf c)
 
 (* aide pour l'utilisation du programme *)
 let print_help () =
-  print_string "./interp [option] fichier \nOptions :\n   -debug : pour afficher le programme en entrée\n   -machine : Compile le programme et l'exécute\n   -interm : affiche le programme compilé sans l'exécuter.\n\n"
+  print_string "./fouine [option] fichier \nOptions :\n   -debug : pour afficher le programme en entrée\n   -machine : Compile le programme et l'exécute\n   -interm : affiche le programme compilé sans l'exécuter.\n\t\t\t./fouine -interm toto.code fichier.ml\n"
 
 (* Affichage du code généré pour la machine à pile *)
 let rec write_code code fd =
@@ -39,6 +40,12 @@ let rec write_code code fd =
 		write_code q fd;
     | (P)::q -> Printf.fprintf fd "%s\n" "P";
 		write_code q fd;
+    | (LET x)::q -> Printf.fprintf fd "%s\n" ("LET "^x);
+		    write_code q fd;
+    | (ACCESS x)::q -> Printf.fprintf fd "%s\n" ("ACCESS "^x);
+		       write_code q fd;
+    | ENDLET::q -> Printf.fprintf fd "%s\n" "ENDLET";
+		   write_code q fd;
   end
 	       
 
@@ -60,28 +67,32 @@ let no_opt () =
     let result = parse c in
     let deb = ref [] in
     match interp result deb with
-        VInt n -> print_int n;
-		    print_newline(); flush stdout; close_in c
-      | VFun (x,body,l) -> affiche_prog (Function (x,body)); close_in c
-      | VFunR (x,body,l) -> affiche_prog (Function (x,body)); close_in c
-      | VRef _ -> print_string "A reference cannot be printed";
-		  print_newline(); flush stdout; close_in c
-      | VErr _ -> close_in c; failwith("How did you manage to get an exception to be returned and not raised ?")
-
+      VInt n -> print_int n;
+		print_newline(); flush stdout; close_in c
+    | VFun (x,body,l) -> affiche_prog (Function (x,body)); close_in c
+    | VFunR (x,body,l) -> affiche_prog (Function (x,body)); close_in c
+    | VRef _ -> print_string "A reference cannot be printed";
+		print_newline(); flush stdout; close_in c
+    | VErr _ -> close_in c; failwith("How did you manage to get an exception to be returned and not raised ?")
+				    
   with | e -> (print_string (Printexc.to_string e))
-
+		
 (* Execute le programme sur la machine à pile *)
 let opt_machine () =
   try
     let c = open_in Sys.argv.(2) in
     let result = parse c in
-    let code = Compilateur.compile result in
-    let n = exec code in
-    begin
-      close_in c;
-      print_string (string_of_int n);
-      print_newline ();
-    end
+    let (b,progaexec) = purifier result in
+    let deb = ref [] in
+    match interpmixte progaexec deb with
+      VInt n -> print_int n;
+		print_newline(); flush stdout; close_in c
+    | VFun (x,body,l) -> affiche_prog (Function (x,body)); close_in c
+    | VFunR (x,body,l) -> affiche_prog (Function (x,body)); close_in c
+    | VRef _ -> print_string "A reference cannot be printed";
+		print_newline(); flush stdout; close_in c
+    | VErr _ -> close_in c; failwith("How did you manage to get an exception to be returned and not raised ?")
+
   with | e -> (print_string (Printexc.to_string e))
 
 (* Option qui affiche le code de la machine à pile *)

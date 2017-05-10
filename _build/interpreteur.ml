@@ -1,35 +1,6 @@
 open Expr
 
-(* Fonction lookup pour chercher la valeur d'une variable dans la pile *)
-let rec lookup:var->env->valeur= fun x l ->
-  match !l with
-    [] -> failwith(x^" is not defined in the current environment.")
-  | (s, v)::lp when x=s -> v
-  (*| (s, VFun (x,body))::lp when x=s -> VFun (x,body)*)
-  | (s,v)::lp -> l:=lp;
-		 let res = lookup x l in
-		 begin
-		   l:=((s,v)::lp);
-		   res
-		 end
-
-(* retire une valeur de la mémoire*)
-let rec pop:var->env->unit = fun x l ->
-  match !l with
-    [] -> failwith("Suppressing a variable that wasn't in the environment.")
-  | (s,v)::lp when x=s -> l:=lp
-  | (s,v)::lp -> l:=lp;
-		 pop x l;
-		 l:=(s,v)::lp
- 
-(* Met à jour la valeur d'une référence dans la mémoire *)
-let rec update (x : var) (l : env) (n : int) = 
-  match !l with
-  | [] -> failwith("The reference " ^ x ^ "is not in the current environment")
-  | (s,VRef v)::lp when s = x -> v:=n
-  | (s,v)::lp -> l := lp;
-                 update x l n;
-                 l := (s,v)::lp
+(* Les fonctions lookup, pop et update sont maintenant dans expr.ml car elles sont aussi utilisées ar la machine à pile *)
 
 (* La fonction la plus importante : l'interpréteur ! *)
 
@@ -58,24 +29,24 @@ let rec interp:prog->env->valeur=fun p l ->
 		  end
 
   (* Les fonctions arithmétiques, qui ne peuvent additioner que des entiers *)
-  | Add (e1,e2) ->begin
+  | Add (e1,e2,_) ->begin
 		   match ((interp e1 l),(interp e2 l)) with
 		     (VInt n1, VInt n2) -> VInt (n1+n2)
 		   | (_,_) -> failwith("Trying to add functions or references.")
 		 end
-  | Mul (e1,e2) -> begin
+  | Mul (e1,e2,_) -> begin
 		   match ((interp e1 l),(interp e2 l)) with
 		     (VInt n1, VInt n2) -> VInt (n1*n2)
 		   | (_,_) -> failwith("Trying to multiply functions.")
 		 end
-  | Min (e1,e2) ->begin
+  | Min (e1,e2,_) ->begin
 		   match ((interp e1 l),(interp e2 l)) with
 		     (VInt n1, VInt n2) -> VInt (n1-n2)
 		   | (_,_) -> failwith("Trying to substract functions.")
 		 end
 
   (* LetIn peut soir correspondre à la définition d'une fonction, soit à la définition d'un entier, ça dépend de si interp p1 l renvoie une VFun ou un VInt *)
-  | Letin (x,p1,p2) -> let new_val = interp p1 l in
+  | Letin (x,p1,p2,_) -> let new_val = interp p1 l in
 		       begin
 			 l:=((x,new_val)::(!l));
 			 let res = interp p2 l in
@@ -161,7 +132,7 @@ let rec interp:prog->env->valeur=fun p l ->
 		    end
 
   (* Si on fait un prInt, alors on print et on renvoie la valeur *)
-  | PrInt x -> begin
+  | PrInt (x,_) -> begin
                let n = interp x l in
                match n with
 		           VInt k -> print_int k; print_newline (); n
@@ -196,8 +167,10 @@ let rec interp:prog->env->valeur=fun p l ->
                         end
   | TryWith (p1,e,p2) ->begin
 			 match e with
+			   (* On vérifie que e est bien un code d'erreur *)
 			   Excep (p) -> begin
 				       match p with
+					 (* Son argument doit soit être une variable... *)
 					 Variable x -> begin
 							   try interp p1 l
 							   with (E y) -> begin
@@ -211,8 +184,10 @@ let rec interp:prog->env->valeur=fun p l ->
 							 end
 				       | _  -> begin
 					       match interp p l with
+						 (* ...Soit un programme qui renvoie un int *)
 						 VInt n -> begin
 							  try interp p1 l
+							(* On catch l'erreur et on vérifie que c'est la bonne, sinon on fait remonter l'erreur *)
 							  with (E k) -> if n=k then interp p2 l
 									else raise (E k)
 							end
@@ -221,11 +196,13 @@ let rec interp:prog->env->valeur=fun p l ->
 				  end
 			 | _ -> failwith("Catching something that isn't an error")
 		       end
+			  
   | Raise (p) -> begin
 		 match interp p l with
 		   VErr e -> raise e
 		 | _ -> failwith("Not raising an error")
 	       end
+		   
   | Excep (p) -> begin
 		 match interp p l with
 		   VInt n -> VErr (E n)
