@@ -85,7 +85,7 @@ let rec interpmixte:prog->env->valeur=fun p l ->
 		     if b
 		     then begin
 			 let code = Compilateur.compile p in
-			 VInt (exec code)
+			 VInt (exec code l)
 		       end
 		     else
 		       match ((interpmixte e1 l),(interpmixte e2 l)) with
@@ -96,7 +96,7 @@ let rec interpmixte:prog->env->valeur=fun p l ->
 		     if b
 		     then begin
 			 let code = Compilateur.compile p in
-			 VInt (exec code)
+			 VInt (exec code l)
 		       end
 		     else
 		       match ((interpmixte e1 l),(interpmixte e2 l)) with
@@ -107,7 +107,7 @@ let rec interpmixte:prog->env->valeur=fun p l ->
 		     if b
 		     then begin
 			 let code = Compilateur.compile p in
-			 VInt(exec code)
+			 VInt(exec code l)
 		       end
 		     else
 		       match ((interpmixte e1 l),(interpmixte e2 l)) with
@@ -120,7 +120,7 @@ let rec interpmixte:prog->env->valeur=fun p l ->
 			 if b
 			 then begin
 			     let code = Compilateur.compile p in
-			     VInt(exec code)
+			     VInt(exec code l)
 			   end
 			 else
 		       begin
@@ -212,7 +212,7 @@ let rec interpmixte:prog->env->valeur=fun p l ->
 		   if b
 		   then
 		     let code = Compilateur.compile p in
-		     VInt (exec code)
+		     VInt (exec code l)
 		   else
 		     let n = interpmixte x l in
 		     match n with

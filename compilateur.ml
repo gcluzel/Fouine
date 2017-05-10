@@ -24,7 +24,7 @@ let rec compile:prog->instr list = fun p ->
 		  
 
 (* Execution de la machine à pile*)
-let rec exec code = 
+let rec exec code e = 
 	let rec aux code pile l =
 		match code with
 		| [] -> begin 
@@ -78,4 +78,4 @@ let rec exec code =
 		| ENDLET::q -> pop_last l;
 			       aux q pile l
 	in
-	aux code [] (ref []);;
+	aux code [] e;;

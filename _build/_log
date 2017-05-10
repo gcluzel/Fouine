@@ -1,6 +1,6 @@
 ### Starting build.
 # Target: main.ml.depends, tags: { extension:ml, file:main.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules main.ml > main.ml.depends
+/usr/bin/ocamldep -modules main.ml > main.ml.depends # cached
 # Target: compilateur.ml.depends, tags: { extension:ml, file:compilateur.ml, ocaml, ocamldep, quiet }
 /usr/bin/ocamldep -modules compilateur.ml > compilateur.ml.depends # cached
 # Target: expr.ml.depends, tags: { extension:ml, file:expr.ml, ocaml, ocamldep, quiet }
@@ -14,9 +14,7 @@
 # Target: interpreteur.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:interpreteur.cmo, file:interpreteur.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o interpreteur.cmo interpreteur.ml # cached
 # Target: interpreteurmixte.ml.depends, tags: { extension:ml, file:interpreteurmixte.ml, ocaml, ocamldep, quiet }
-/usr/bin/ocamldep -modules interpreteurmixte.ml > interpreteurmixte.ml.depends # cached
-# Target: interpreteurmixte.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:interpreteurmixte.cmo, file:interpreteurmixte.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc -c -o interpreteurmixte.cmo interpreteurmixte.ml # cached
+/usr/bin/ocamldep -modules interpreteurmixte.ml > interpreteurmixte.ml.depends
 # Target: lexer.mll, tags: { extension:mll, file:lexer.mll, lexer, ocaml, ocamllex, quiet }
 /usr/bin/ocamllex -q lexer.mll # cached
 # Target: lexer.ml.depends, tags: { extension:ml, file:lexer.ml, ocaml, ocamldep, quiet }
@@ -27,8 +25,10 @@
 /usr/bin/ocamldep -modules parser.mli > parser.mli.depends # cached
 # Target: parser.cmi, tags: { byte, compile, extension:mli, file:parser.mli, interf, ocaml, quiet }
 /usr/bin/ocamlc -c -o parser.cmi parser.mli # cached
+# Target: interpreteurmixte.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:interpreteurmixte.cmo, file:interpreteurmixte.ml, implem, ocaml, quiet }
+/usr/bin/ocamlc -c -o interpreteurmixte.cmo interpreteurmixte.ml
 # Target: lexer.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:lexer.cmo, file:lexer.ml, implem, ocaml, quiet }
-/usr/bin/ocamlc -c -o lexer.cmo lexer.ml # cached
+/usr/bin/ocamlc -c -o lexer.cmo lexer.ml
 # Target: main.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:main.cmo, file:main.ml, implem, ocaml, quiet }
 /usr/bin/ocamlc -c -o main.cmo main.ml
 # Target: expr.cmx, tags: { compile, extension:cmx, extension:ml, file:expr.cmx, file:expr.ml, implem, native, ocaml, quiet }
