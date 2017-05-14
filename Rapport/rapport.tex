@@ -1,0 +1,98 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+%\usepackage{fourier}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\author{Guillaume Cluzel et Julien Devevey et La Fouine}
+\title{Projet 2}
+\begin{document}
+\maketitle
+
+\begin{flushright}
+\textit{L'argent n'a pas d'odeur, \\
+Mais la Fouine a du flair.} \\
+\textsc{La Fouine}
+\end{flushright}
+
+
+
+\section{Présentation}
+
+Nous avons programmé en Caml, un programme permettant d'interpréter une partie du langage Caml (niveau intermédiaire), contenant uniquement les fonctions, les fonctions récursives, les références et les exceptions.
+
+Une différence avec ce qui était attendu. Nous avons pris le parti que nous ne pouvions pas faire n'importe quoi avec les référence pour se rapporcher du langage OCaml.
+Les références ne peuvent pas s'utiliser de la manière suivant :
+\begin{verbatim}
+let a = ref 0 in
+    let y = (a := 3) in
+    y
+\end{verbatim}
+
+A la place on utilisera le code suivant qui colle mieux à ce qu'on pourrait faire en OCaml.
+\begin{verbatim}
+let a = ref 0 in
+    let y = 
+        a := 3 ; 
+        !a 
+    in
+    y
+\end{verbatim}
+
+On a utilisé pour mener à bien se projet un article de Perter Landin \cite{DBLP:journals/cacm/Landin66}.
+
+
+
+Nous exposons à la partie~\ref{s:orga} comment notre programme est structuré.
+
+
+
+
+\section{Organisation du code}
+\label{s:orga}
+
+Le code est structuré en plusieurs fichiers.
+\begin{description}
+\item[main.ml] Point d'entrée du programme. Il gère les différents arguments qui peuvent être passés au programme.
+\item[expr.ml] Fichier dans lequel tous les types sont définis. Il contient aussi des fonctions utilitaires telles que pour l'affichage.
+\item[interpreteur.ml] Contient tout le nécessaire pour interpréter un programme fouine.
+\item[compilateur.ml] Fichier pour compiler un programme fouine vers du code machine et pour l'exécuter. Il ne contient qu'un sous ensemble de fouine constitué des \texttt{let ... in} et des expressions arithmétiques.
+\item[interpreteurmixte.ml] Dans ce fichier, la machine à pile capable de gérer les expressions arithmétique et les variables est complété par l'interpréteur qui gère la totalité des programmes fouine. Une partie des programmes sera donc compilée et une autre interprétée.
+\end{description}
+
+Enfin des fichiers tests sont founis dans le dossier \texttt{test/} pour tester notre interpréteur et notre compilateur fouine.
+
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline 
+Fichiers & Lexer/parser & main.ml & expr.ml & interpreteur.ml & compilateur.ml & interpreteurmixte.ml \\ 
+\hline 
+Guillaume & \checkmark & \checkmark & & \checkmark & \checkmark &  \\ 
+\hline 
+Julien & & \checkmark & \checkmark & \checkmark & \checkmark & \checkmark  \\ 
+\hline 
+\end{tabular}
+\caption{Répartition des fichiers} 
+\end{table}
+
+\section{Critique des performances}
+
+Nous nous sommes bien réparti le travail, nous n'avons jamais eu de retard. Nous connaissions tous les deux le Caml nous n'avons donc pas eu de problèmes de ce côté. Seul le lexer/parser été vraiment nouveau et parfois  un peu difficile à bien comprendre.
+
+
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{bibliography}
+
+
+
+
+
+\end{document}
