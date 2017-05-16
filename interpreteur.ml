@@ -76,12 +76,13 @@ let rec interp:prog->env->valeur=fun p l ->
   | Function (x,pfun) -> VFun (x,pfun,ref !l)
 
   (* Ici on souhaite appliquer une fonction *)
-  | ApplyFun (f,p) -> begin
-		      match f with
-			(* On a tous les arguments : alors on peut appliquer la fonction *)
-			Variable s -> begin
-				     match lookup s l with
-				       VFun (x,body,clo) -> let fenv = (x, interp p l)::(!clo) and cloanc = !clo in
+  | ApplyFun (f,p) -> let argument = interp p l in (* Comme demandé lors du rendu 3, on interprète d'abord l'argument avant la fonction *)
+		      begin
+			match f with
+			  (* On a tous les arguments : alors on peut appliquer la fonction *)
+			  Variable s -> begin
+				       match lookup s l with
+				       VFun (x,body,clo) -> let fenv = (x, argument)::(!clo) and cloanc = !clo in
 							begin
 							  clo:= fenv;
 							  match interp body clo with
@@ -91,7 +92,7 @@ let rec interp:prog->env->valeur=fun p l ->
 								 n
 							end
 				     (* On utilise la cloture associée à la fonction *)
-				     | VFunR (x, body, clo) -> let fenv = (s, VFunR (x, body, clo))::(x, interp p l)::(!clo) and cloanc = !clo in
+				     | VFunR (x, body, clo) -> let fenv = (s, VFunR (x, body, clo))::(x, argument)::(!clo) and cloanc = !clo in
 							begin
 							  clo:= fenv;
 							  match interp body clo with
@@ -108,7 +109,7 @@ let rec interp:prog->env->valeur=fun p l ->
 					 let lanc = !l in
 					   match interp f l with
 					     VFun (y, body, clo) -> begin
-							      l:=((y, interp p (ref lanc))::(!clo));
+							      l:=((y, argument)::(!clo));
 							      match interp body l with
 								VFun (z,bodyp,clop) -> VFun (z,bodyp,clop)
 							      | VFunR (z,bodyp,clop) -> VFunR (z,bodyp,clop)
@@ -118,7 +119,7 @@ let rec interp:prog->env->valeur=fun p l ->
 					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
 				       end
 		      (* Cas où on définit une fonction anonyme puis qu'on l'applique juste après *)
-		      | Function(x,body) -> let fenv = (x, interp p l)::(!l) and lanc = !l in
+		      | Function(x,body) -> let fenv = (x, argument)::(!l) and lanc = !l in
 							begin
 							  l:= fenv;
 							  match interp body l with

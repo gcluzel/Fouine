@@ -152,61 +152,62 @@ let rec interpmixte:prog->env->valeur=fun p l ->
   | Function (x,pfun) -> VFun (x,pfun,ref !l)
 
   (* Ici on souhaite appliquer une fonction *)
-  | ApplyFun (f,p) -> begin
-		      match f with
-			(* On a tous les arguments : alors on peut appliquer la fonction *)
-			Variable s -> begin
-				     match lookup s l with
-				       VFun (x,body,clo) -> let fenv = (x, interpmixte p l)::(!clo) and cloanc = !clo in
-							begin
-							  clo:= fenv;
-							  match interpmixte body clo with
-							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
-							  | VFunR (y, bodyp,clop) -> VFunR (y, bodyp,clop)
-							  | n -> clo:= cloanc;
-								 n
-							end
-				     (* On utilise la cloture associée à la fonction *)
-				     | VFunR (x, body, clo) -> let fenv = (s, VFunR (x, body, clo))::(x, interpmixte p l)::(!clo) and cloanc = !clo in
-							begin
-							  clo:= fenv;
-							  match interpmixte body clo with
-							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
-							  | VFunR (y,bodyp,clop) -> VFunR (y,bodyp,clop)
-							  | n -> clo:= cloanc;
-								 n
-							end
-     				     | _ -> failwith("Trying to use something that isn't a function as a fonction.")
-				   end
-					
-		      (* Cas où il manque encore des arguments : on cherche alors les autres*)
-		      | ApplyFun(_,_) -> begin
-					 let lanc = !l in
+  | ApplyFun (f,p) -> let argument = interpmixte p l in
+		      begin
+			match f with
+			  (* On a tous les arguments : alors on peut appliquer la fonction *)
+			  Variable s -> begin
+				       match lookup s l with
+					 VFun (x,body,clo) -> let fenv = (x, argument)::(!clo) and cloanc = !clo in
+							      begin
+								clo:= fenv;
+								match interpmixte body clo with
+								  VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
+								| VFunR (y, bodyp,clop) -> VFunR (y, bodyp,clop)
+								| n -> clo:= cloanc;
+								       n
+							      end
+				       (* On utilise la cloture associée à la fonction *)
+				       | VFunR (x, body, clo) -> let fenv = (s, VFunR (x, body, clo))::(x, argument)::(!clo) and cloanc = !clo in
+								 begin
+								   clo:= fenv;
+								   match interpmixte body clo with
+								     VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
+								   | VFunR (y,bodyp,clop) -> VFunR (y,bodyp,clop)
+								   | n -> clo:= cloanc;
+									  n
+								 end
+     				       | _ -> failwith("Trying to use something that isn't a function as a fonction.")
+				     end
+					  
+			(* Cas où il manque encore des arguments : on cherche alors les autres*)
+			| ApplyFun(_,_) -> begin
+					   let lanc = !l in
 					   match interpmixte f l with
 					     VFun (y, body, clo) -> begin
-							      l:=((y, interpmixte p (ref lanc))::(!clo));
-							      match interpmixte body l with
-								VFun (z,bodyp,clop) -> VFun (z,bodyp,clop)
-							      | VFunR (z,bodyp,clop) -> VFunR (z,bodyp,clop)
-							      | n -> l:=lanc;
-								     n
-							    end
+								   l:=((y, argument)::(!clo));
+								   match interpmixte body l with
+								     VFun (z,bodyp,clop) -> VFun (z,bodyp,clop)
+								   | VFunR (z,bodyp,clop) -> VFunR (z,bodyp,clop)
+								   | n -> l:=lanc;
+									  n
+								 end
 					   | _ -> failwith("trying to apply something that isn't a function or too much arguments given.")
-				       end
-		      (* Cas où on définit une fonction anonyme puis qu'on l'applique juste après *)
-		      | Function(x,body) -> let fenv = (x, interpmixte p l)::(!l) and lanc = !l in
-							begin
-							  l:= fenv;
-							  match interpmixte body l with
-							    VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
-							  | VFunR (y,boyp,clop) -> VFunR (y,body,clop)
-							  | n -> l:= lanc;
-								 n
-							end
-				     (* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
-		      | _ -> failwith("Not the right number of arguments or not applying a function")
-		    end
-
+					 end
+			(* Cas où on définit une fonction anonyme puis qu'on l'applique juste après *)
+			| Function(x,body) -> let fenv = (x, argument)::(!l) and lanc = !l in
+					      begin
+						l:= fenv;
+						match interpmixte body l with
+						  VFun (y,bodyp,clop) -> VFun (y,bodyp,clop)
+						| VFunR (y,boyp,clop) -> VFunR (y,body,clop)
+						| n -> l:= lanc;
+						       n
+					      end
+			(* On crée en fait un nouvel environnement d'exécution car on fait un appel fonction *)
+			| _ -> failwith("Not the right number of arguments or not applying a function")
+		      end
+			
   (* Si on fait un prInt, alors on print et on renvoie la valeur *)
   | PrInt (x,b) -> begin
 		   if b
