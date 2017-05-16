@@ -1,0 +1,112 @@
+\documentclass[12pt]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[frenchb]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\author{Guillaume \textsc{Cluzel} et Julien \textsc{Devevey}}
+\title{Projet Fouine (Intermédiaire)}
+
+\hypersetup{pdfpagemode=FullScreen} 
+
+%\setbeamercovered{transparent} 
+%\setbeamertemplate{navigation symbols}{} 
+%\logo{} 
+%\institute{} 
+%\date{} 
+%\subject{} 
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+%\begin{frame}
+%\tableofcontents
+%\end{frame}
+
+\begin{frame}[fragile]{les références}
+
+  \begin{itemize}
+  \item Gestion différente des références plus proches de ce qu'on pourrait faire en OCaml.
+  \end{itemize}
+
+A la place de :
+
+\begin{verbatim}
+    let a = ref 0 in
+        let b = (a := 1) in
+        !b
+\end{verbatim}
+
+On écrira :
+
+\begin{verbatim}
+    let a = ref 0 in
+        let b = (a := 1; !a) in
+        !b
+\end{verbatim}
+
+
+\end{frame}
+
+
+
+
+
+\begin{frame}[fragile]{Les exceptions}
+\begin{itemize}
+\item On a créé une exception \texttt{E}
+\begin{verbatim}
+    let y = try
+               raise (E 0)
+            with E 1 -> prInt 15
+\end{verbatim}
+
+\item Ce code retourne une erreur \texttt{E 0}.
+
+\item Malheuresement on ne peut pas attraper d'autres erreurs que celles déclenchées par \texttt{raise}.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}{L'interpréteur mixte}
+
+L'interpréteur mixte fonctionne de la manière suivante :
+
+
+\vspace{12pt}  
+
+\begin{itemize}
+  \item Pour une expression arithmétique contenant uniquement des variables, on utilise la machine à pile.
+  
+    \vspace{12pt}  
+  
+  \item Pour l'évaluation de fonctions, les références et les exceptions, on bascule sur l'interpréteur.
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}{Conclusion}
+\begin{itemize}
+\item Ce qui a été plus difficile :
+\begin{itemize}
+\item L'interprétation et  l'évaluation des fonctions et les portée des variables.
+\item Dans le parser le plus dur a été de parser l'application de fonction
+\end{itemize}
+
+\item Sinon tout fonctionne correctement.
+\end{itemize}
+\end{frame}
+
+
+\end{document}
