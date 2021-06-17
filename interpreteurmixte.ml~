@@ -1,5 +1,0 @@
-open Expr
-
-
-let purifier p =
-  match p with
